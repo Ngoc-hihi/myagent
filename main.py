@@ -4,7 +4,7 @@ import tempfile
 import pickle
 import asyncio
 import pandas as pd
-from fastapi import FastAPI, APIRouter, UploadFile, File, Form, HTTPException, Query
+from fastapi import FastAPI, APIRouter, UploadFile, File, Form, HTTPException, Query, Body
 from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -88,6 +88,12 @@ class SampleRequest(BaseModel):
     problem_statement: Optional[str] = ""
     additional_info: Optional[str] = ""
 
+class ApproveRequest(BaseModel):
+    sample_type: Optional[str] = None
+    business_type: Optional[str] = None
+    problem_statement: Optional[str] = None
+    additional_info: Optional[str] = None
+
 class DashboardFilterRequest(BaseModel):
     metric: Optional[str] = None
     group_by: Optional[str] = None
@@ -132,21 +138,24 @@ async def reset_session():
 async def load_sample(req: SampleRequest):
     global processor, current_session
     current_session["sample_type"] = req.sample_type
+    default_fnb_btype = "Chuỗi F&B, Nhà hàng & Dịch vụ Ẩm thực"
+    custom_btype = (req.business_type or "").strip()
+
     if req.sample_type == "fnb":
         df = get_fnb_sample_df()
-        current_session["business_type"] = req.business_type or "Chuỗi Nhà hàng & F&B (PHAMHAANHNGOC Hospitality)"
-        current_session["problem_statement"] = req.problem_statement or "Chi phí nguyên vật liệu và tỷ lệ hao hụt vượt định mức an toàn 12% tại các cơ sở"
-        current_session["additional_info"] = req.additional_info or "Chuỗi 7 chi nhánh tại các thành phố lớn (Hà Nội, TP.HCM, Đà Nẵng)"
+        current_session["business_type"] = custom_btype or default_fnb_btype
+        current_session["problem_statement"] = (req.problem_statement or "").strip() or "Chi phí nguyên vật liệu và tỷ lệ hao hụt vượt định mức an toàn 12% tại các cơ sở"
+        current_session["additional_info"] = (req.additional_info or "").strip() or "Chuỗi 7 chi nhánh tại các thành phố lớn (Hà Nội, TP.HCM, Đà Nẵng)"
     elif req.sample_type == "retail":
         df = get_retail_sample_df()
-        current_session["business_type"] = req.business_type or "Bán lẻ đa kênh & Thương mại điện tử (Omnichannel Retail)"
-        current_session["problem_statement"] = req.problem_statement or "Tỷ lệ hủy đơn hàng cao và chi phí hoàn đơn kênh online tăng trong 2 quý gần nhất"
-        current_session["additional_info"] = req.additional_info or "5 kênh bán hàng: Website, Shopee, TikTok Shop, Showroom, Lazada"
+        current_session["business_type"] = "Bán lẻ đa kênh & Thương mại điện tử (Omnichannel Retail)" if custom_btype in ("", default_fnb_btype) else custom_btype
+        current_session["problem_statement"] = (req.problem_statement or "").strip() or "Tỷ lệ hủy đơn hàng cao và chi phí hoàn đơn kênh online tăng trong 2 quý gần nhất"
+        current_session["additional_info"] = (req.additional_info or "").strip() or "5 kênh bán hàng: Website, Shopee, TikTok Shop, Showroom, Lazada"
     elif req.sample_type == "saas":
         df = get_saas_sample_df()
-        current_session["business_type"] = req.business_type or "Công nghệ & Phần mềm Dịch vụ (B2B SaaS)"
-        current_session["problem_statement"] = req.problem_statement or "Tỷ lệ khách hàng rời bỏ dịch vụ (Churn rate) gia tăng và chi phí chăm sóc sau bán chưa tối ưu"
-        current_session["additional_info"] = req.additional_info or "Mô hình SaaS subscription 4 gói dịch vụ (Starter, Pro, Enterprise, Custom)"
+        current_session["business_type"] = "Công nghệ & Phần mềm Dịch vụ (B2B SaaS)" if custom_btype in ("", default_fnb_btype) else custom_btype
+        current_session["problem_statement"] = (req.problem_statement or "").strip() or "Tỷ lệ khách hàng rời bỏ dịch vụ (Churn rate) gia tăng và chi phí chăm sóc sau bán chưa tối ưu"
+        current_session["additional_info"] = (req.additional_info or "").strip() or "Mô hình SaaS subscription 4 gói dịch vụ (Starter, Pro, Enterprise, Custom)"
     else:
         raise HTTPException(status_code=400, detail="Mẫu dữ liệu không hợp lệ")
 
@@ -279,9 +288,23 @@ def _ensure_serverless_dataset_loaded(fallback_sample: str = "retail"):
     processor.clean_data()
 
 @api_router.post("/approve")
-async def approve_and_generate_dashboard():
+async def approve_and_generate_dashboard(req: Optional[ApproveRequest] = Body(default=None)):
     global processor, current_session
-    await asyncio.to_thread(_ensure_serverless_dataset_loaded, "retail")
+    fallback_st = (req.sample_type if req and req.sample_type else None) or current_session.get("sample_type") or "retail"
+    await asyncio.to_thread(_ensure_serverless_dataset_loaded, fallback_st)
+
+    if req:
+        if req.problem_statement and req.problem_statement.strip():
+            current_session["problem_statement"] = req.problem_statement.strip()
+        if req.business_type and req.business_type.strip():
+            current_session["business_type"] = req.business_type.strip()
+        if req.additional_info is not None and req.additional_info.strip():
+            current_session["additional_info"] = req.additional_info.strip()
+        processor.business_context = {
+            "business_type": current_session["business_type"],
+            "problem_statement": current_session["problem_statement"],
+            "additional_info": current_session["additional_info"]
+        }
 
     try:
         analytics = await asyncio.to_thread(

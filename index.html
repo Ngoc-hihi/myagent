@@ -1268,9 +1268,9 @@
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
-      flex-wrap: wrap !important;
-      gap: 10px !important;
-      margin-bottom: 8px !important;
+      flex-wrap: nowrap !important;
+      gap: 14px !important;
+      margin-bottom: 10px !important;
       width: 100% !important;
     }
     .problem-label-row .form-label {
@@ -1279,48 +1279,103 @@
       display: inline-flex !important;
       align-items: center !important;
       gap: 4px !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      color: #1E293B !important;
+      white-space: nowrap !important;
     }
     .problem-helper-actions {
       display: inline-flex !important;
       align-items: center !important;
-      gap: 12px !important;
+      gap: 14px !important;
       margin-left: auto !important;
+      flex-shrink: 0 !important;
     }
     .combine-mode-toggle {
       display: inline-flex !important;
       align-items: center !important;
-      gap: 6px !important;
-      font-size: 12.5px !important;
-      font-weight: 600 !important;
-      color: #64748B !important;
+      gap: 8px !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: #475569 !important;
       cursor: pointer !important;
       user-select: none !important;
       margin: 0 !important;
     }
     .combine-mode-toggle input[type="checkbox"] {
-      accent-color: #FF6B6B !important;
-      width: 15px !important;
-      height: 15px !important;
-      cursor: pointer !important;
-      margin: 0 !important;
-    }
-    .btn-clear-problem {
-      background: #FFF0EE !important;
-      color: #E11D48 !important;
-      border: 1px solid rgba(255, 107, 107, 0.28) !important;
-      border-radius: 999px !important;
-      padding: 4px 12px !important;
-      font-size: 12px !important;
-      font-weight: 700 !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      width: 18px !important;
+      height: 18px !important;
+      border: 1.5px solid #FF6B6B !important;
+      border-radius: 4px !important;
+      background-color: #FFFFFF !important;
       cursor: pointer !important;
       display: inline-flex !important;
       align-items: center !important;
-      gap: 4px !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      position: relative !important;
+      transition: all 0.15s ease !important;
+    }
+    .combine-mode-toggle input[type="checkbox"]:checked {
+      background-color: #FF6B6B !important;
+      border-color: #FF6B6B !important;
+    }
+    .combine-mode-toggle input[type="checkbox"]:checked::after {
+      content: "" !important;
+      display: block !important;
+      width: 5px !important;
+      height: 9px !important;
+      border: solid #FFFFFF !important;
+      border-width: 0 2.2px 2.2px 0 !important;
+      transform: rotate(45deg) !important;
+      margin-bottom: 2px !important;
+    }
+    .btn-clear-problem {
+      background: #FFFFFF !important;
+      color: #E11D48 !important;
+      border: 1px solid #FECDD3 !important;
+      border-radius: 999px !important;
+      padding: 5px 14px !important;
+      font-size: 12.5px !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      box-shadow: 0 1px 2px rgba(225, 29, 72, 0.05) !important;
       transition: all 0.2s ease !important;
     }
     .btn-clear-problem:hover {
-      background: #FFE4E0 !important;
+      background: #FFF1F2 !important;
+      border-color: #FDA4AF !important;
       transform: translateY(-1px) !important;
+    }
+    #inputProblem {
+      border: 1.5px solid #FDBA74 !important;
+      border-radius: 12px !important;
+      background: #FFFFFF !important;
+      font-size: 13.5px !important;
+      line-height: 1.6 !important;
+      color: #334155 !important;
+      padding: 12px 14px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      transition: all 0.2s ease !important;
+    }
+    #inputProblem:focus {
+      outline: none !important;
+      border-color: #FB923C !important;
+      box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.18) !important;
+    }
+    @media (max-width: 680px) {
+      .problem-label-row {
+        flex-wrap: wrap !important;
+      }
+      .problem-label-row .form-label {
+        white-space: normal !important;
+      }
     }
     .problem-suggestions-box {
       margin-top: 12px !important;
@@ -1420,6 +1475,24 @@
       let fallbackRankChart = null;
       const origFetch = window.fetch;
       window.fetch = async function(...args) {
+        try {
+          const reqUrl = typeof args[0] === "string" ? args[0] : (args[0] && args[0].url) || "";
+          if (reqUrl.includes("/approve")) {
+            const opts = args[1] || { method: "POST" };
+            if (!opts.body) {
+              const probEl = document.getElementById("inputProblem");
+              const btypeEl = document.getElementById("inputBusinessType");
+              const extraEl = document.getElementById("inputExtraInfo");
+              opts.headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+              opts.body = JSON.stringify({
+                business_type: btypeEl ? btypeEl.value.trim() : "",
+                problem_statement: probEl ? probEl.value.trim() : "",
+                additional_info: extraEl ? extraEl.value.trim() : ""
+              });
+              args[1] = opts;
+            }
+          }
+        } catch (e) {}
         const res = await origFetch.apply(this, args);
         try {
           const url = typeof args[0] === "string" ? args[0] : (args[0] && args[0].url) || "";

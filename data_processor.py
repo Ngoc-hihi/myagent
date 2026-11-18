@@ -1239,10 +1239,160 @@ class DataProcessor:
             except Exception:
                 pass
 
-        # 3. AI Strategic Overview & Recommendations (Only generated during Approve, then cached in-memory)
-        if generate_strategy:
-            try:
-                from ai_advisor import generate_ai_business_strategy
+        # 2.5 Extract Multi-Dimensional Deep Facts (Product %, Monthly Peak, Branch, Region, Waste, Cancel, AOV)
+        deep_facts: Dict[str, Any] = {}
+        try:
+            def _fmt_val(v_num: float) -> str:
+                if current_metric and current_metric["type"] == "currency":
+                    if v_num >= 1_000_000_000:
+                        return f"{v_num / 1_000_000_000:.2f} tỷ ₫"
+                    elif v_num >= 1_000_000:
+                        return f"{v_num / 1_000_000:.1f} triệu ₫"
+                    return f"{v_num:,.0f} ₫"
+                elif current_metric and current_metric["type"] == "pct":
+                    return f"{v_num:.1f}%"
+                elif current_metric and current_metric["type"] == "rating":
+                    return f"{v_num:.2f}/5.0"
+                return f"{int(v_num):,}"
+
+            def _group_ranking(col_name: Optional[str]) -> List[Dict[str, str]]:
+                if not col_name or col_name not in df.columns or not metric_col or metric_col not in df.columns or len(df) == 0:
+                    return []
+                if current_metric and current_metric["type"] in ["pct", "rating"]:
+                    g = df.groupby(col_name)[metric_col].mean().sort_values(ascending=False)
+                else:
+                    g = df.groupby(col_name)[metric_col].sum().sort_values(ascending=False)
+                g_tot = float(g.sum()) if float(g.sum()) > 0 else 1.0
+                out = []
+                for k, v in g.items():
+                    vf = float(v)
+                    pct_s = f"{(vf / g_tot) * 100:.1f}%" if (not current_metric or current_metric["type"] not in ["pct", "rating"]) else f"{vf:.1f}%"
+                    out.append({"name": str(k), "value": _fmt_val(vf), "share": pct_s, "raw": vf})
+                return out
+
+            # A. Product / Category facts
+            prod_ranks = _group_ranking(rank_col)
+            if prod_ranks:
+                deep_facts["top_product"] = prod_ranks[0]
+                deep_facts["second_product"] = prod_ranks[1] if len(prod_ranks) > 1 else prod_ranks[0]
+                deep_facts["bottom_product"] = prod_ranks[-1]
+                deep_facts["product_col_label"] = rank_col.replace("_", " ") if rank_col else "Sản phẩm"
+
+            # B. Branch / Store / Channel facts
+            branch_cands = [c for c in df.columns if any(k in c.lower() for k in ['cơ_sở', 'cơ sở', 'chi_nhánh', 'chi nhánh', 'kênh', 'channel', 'store', 'branch'])]
+            b_col = branch_cands[0] if branch_cands else dim_col
+            branch_ranks = _group_ranking(b_col)
+            if branch_ranks:
+                deep_facts["top_branch"] = branch_ranks[0]
+                deep_facts["bottom_branch"] = branch_ranks[-1]
+                deep_facts["branch_col_label"] = b_col.replace("_", " ") if b_col else "Đơn vị"
+
+            # C. Region facts
+            reg_cands = [c for c in df.columns if any(k in c.lower() for k in ['khu_vực', 'khu vực', 'region', 'vùng', 'thành phố', 'tỉnh'])]
+            r_col = reg_cands[0] if reg_cands else b_col
+            reg_ranks = _group_ranking(r_col)
+            if reg_ranks:
+                deep_facts["top_region"] = reg_ranks[0]
+                deep_facts["bottom_region"] = reg_ranks[-1]
+
+            # D. Monthly & Peak Date facts (Real monthly aggregation YYYY-MM -> Tháng MM/YYYY)
+            if date_col and date_col in df.columns and metric_col and metric_col in df.columns and len(df) > 0:
+                d_str_series = df[date_col].astype(str).str.strip()
+                ym_series = d_str_series.str.extract(r'^(\d{4}-\d{2})', expand=False).fillna(d_str_series)
+                temp_df = df.copy()
+                temp_df["_ym_"] = ym_series
+                if current_metric and current_metric["type"] in ["pct", "rating"]:
+                    m_grp = temp_df.groupby("_ym_")[metric_col].mean().sort_values(ascending=False)
+                else:
+                    m_grp = temp_df.groupby("_ym_")[metric_col].sum().sort_values(ascending=False)
+                m_tot = float(m_grp.sum()) if float(m_grp.sum()) > 0 else 1.0
+                if len(m_grp) > 0:
+                    def _fmt_ym(ym_raw: str) -> str:
+                        if len(ym_raw) == 7 and ym_raw[4] == "-":
+                            return f"Tháng {ym_raw[5:7]}/{ym_raw[:4]}"
+                        return ym_raw
+                    top_ym = str(m_grp.index[0])
+                    top_ym_v = float(m_grp.iloc[0])
+                    bot_ym = str(m_grp.index[-1])
+                    bot_ym_v = float(m_grp.iloc[-1])
+                    deep_facts["top_month"] = {
+                        "name": _fmt_ym(top_ym),
+                        "value": _fmt_val(top_ym_v),
+                        "share": f"{(top_ym_v / m_tot) * 100:.1f}%"
+                    }
+                    deep_facts["bottom_month"] = {
+                        "name": _fmt_ym(bot_ym),
+                        "value": _fmt_val(bot_ym_v),
+                        "share": f"{(bot_ym_v / m_tot) * 100:.1f}%"
+                    }
+                # Peak date
+                d_grp = df.groupby(date_col)[metric_col].sum().sort_values(ascending=False)
+                if len(d_grp) > 0:
+                    deep_facts["peak_date"] = {
+                        "name": str(d_grp.index[0]),
+                        "value": _fmt_val(float(d_grp.iloc[0]))
+                    }
+
+            # E. Waste / Cost facts
+            waste_cands = [c for c in df.columns if any(k in c.lower() for k in ['hao_hụt', 'hao hụt', 'waste'])]
+            if waste_cands:
+                w_col = waste_cands[0]
+                w_num = pd.to_numeric(df[w_col], errors='coerce').dropna()
+                if len(w_num) > 0:
+                    w_avg = float(w_num.mean())
+                    w_unit_col = b_col or dim_col
+                    if w_unit_col and w_unit_col in df.columns:
+                        w_by_u = df.groupby(w_unit_col)[w_col].mean().sort_values(ascending=False)
+                        deep_facts["waste_info"] = {
+                            "avg_waste": f"{w_avg:.1f}%",
+                            "worst_unit": str(w_by_u.index[0]),
+                            "worst_val": f"{float(w_by_u.iloc[0]):.1f}%",
+                            "best_unit": str(w_by_u.index[-1]),
+                            "best_val": f"{float(w_by_u.iloc[-1]):.1f}%"
+                        }
+
+            # F. Cancellation / Return / Churn facts
+            status_cands = [c for c in df.columns if any(k in c.lower() for k in ['trạng_thái', 'trạng thái', 'status', 'churn', 'rời_bỏ', 'hủy'])]
+            if status_cands:
+                st_col = status_cands[0]
+                st_counts = df[st_col].astype(str).value_counts()
+                bad_keywords = ['hủy', 'hoàn', 'churn', 'rời', 'cancel', 'return', 'trễ', 'lỗi', 'inactive']
+                bad_statuses = [s for s in st_counts.index if any(bk in s.lower() for bk in bad_keywords)]
+                if bad_statuses:
+                    bad_st = bad_statuses[0]
+                    bad_cnt = int(st_counts[bad_st])
+                    bad_rate = (bad_cnt / max(1, len(df))) * 100
+                    worst_ch = str(b_col or "Kênh bán")
+                    worst_ch_rate = f"{bad_rate:.1f}%"
+                    if b_col and b_col in df.columns:
+                        ch_totals = df.groupby(b_col).size()
+                        ch_bads = df[df[st_col].astype(str) == bad_st].groupby(b_col).size()
+                        ch_rates = (ch_bads / ch_totals * 100).fillna(0).sort_values(ascending=False)
+                        if len(ch_rates) > 0:
+                            worst_ch = str(ch_rates.index[0])
+                            worst_ch_rate = f"{float(ch_rates.iloc[0]):.1f}%"
+                    deep_facts["cancel_info"] = {
+                        "problem_status": bad_st,
+                        "rate_pct": f"{bad_rate:.1f}%",
+                        "worst_channel": worst_ch,
+                        "worst_channel_rate": worst_ch_rate
+                    }
+
+            # G. AOV Leader facts
+            if b_col and b_col in df.columns and metric_col and metric_col in df.columns:
+                aov_grp = df.groupby(b_col)[metric_col].mean().sort_values(ascending=False)
+                if len(aov_grp) > 0:
+                    deep_facts["aov_info"] = {
+                        "top_aov_unit": str(aov_grp.index[0]),
+                        "top_aov_val": _fmt_val(float(aov_grp.iloc[0]))
+                    }
+        except Exception:
+            pass
+
+        # 3. AI Strategic Overview & Recommendations (Always Problem-Aware & Data-Driven)
+        try:
+            from ai_advisor import generate_ai_business_strategy, get_fallback_strategy
+            if generate_strategy or not self.cached_strategy:
                 ai_pack = generate_ai_business_strategy(
                     business_type=business_type,
                     problem_statement=problem_statement,
@@ -1253,102 +1403,33 @@ class DataProcessor:
                     top_breakdown=top_items,
                     bottom_breakdown=bottom_items,
                     total_records=total_records,
-                    math_sanity=math_sanity
+                    math_sanity=math_sanity,
+                    deep_facts=deep_facts
                 )
-                self.cached_overview = ai_pack.get("overview_points", [])
-                self.cached_strategy = ai_pack.get("strategy", {})
-                self.cached_executive_summary = ai_pack.get("executive_summary")
-                self.cached_key_findings = ai_pack.get("key_findings")
-                self.cached_data_integrity_summary = ai_pack.get("data_integrity_summary")
-            except Exception:
-                pass
-
-        # If cached strategy exists, reuse it instantly without making network calls
-        if self.cached_strategy:
-            strategy = self.cached_strategy
-            overview_points = self.cached_overview or [
-                f"Dữ liệu doanh nghiệp sau chuẩn hóa đạt trạng thái nhất quán 100% trên {total_records:,} bản ghi hợp lệ.",
-                f"Góc nhìn phân tích hiện tại: Đo lường chỉ số \"{current_metric['label'] if current_metric else 'Giá trị'}\" nhóm theo \"{current_dimension['label'] if current_dimension else 'Phân nhóm'}\".",
-                f"Đối với bài toán \"{problem_statement or 'Tối ưu hóa hiệu suất vận hành'}\": Các số liệu định lượng đã sẵn sàng phục vụ ra quyết định."
-            ]
-        else:
-            overview_points = [
-                f"Dữ liệu doanh nghiệp sau chuẩn hóa đạt trạng thái nhất quán 100%, đối chiếu loại trừ thành công các biến nhiễu ({self.metadata.get('duplicates_removed', 0)} trùng lặp, {self.metadata.get('missing_filled', 0)} khuyết thiếu đã bù đắp).",
-                f"Góc nhìn phân tích hiện tại: Đo lường chỉ số \"{current_metric['label'] if current_metric else 'Giá trị'}\" nhóm theo \"{current_dimension['label'] if current_dimension else 'Phân nhóm'}\" trên {total_records} bản ghi hợp lệ.",
-                f"Đối với bài toán \"{problem_statement or 'Tối ưu hóa hiệu suất vận hành'}\": Bằng chứng định lượng chỉ rõ các nguồn chênh lệch hiệu quả giữa các phân nhóm chính cần ưu tiên can thiệp."
-            ]
-            strategy = {
-                "title": f"Chiến Lược Tối Ưu Hóa & Giải Quyết Vấn Đề Cho {business_type or 'Doanh Nghiệp'}",
-                "core_problem": problem_statement or "Nâng cao hiệu quả kinh doanh & kiểm soát chi phí",
-                "proposed_solution": {
-                    "name": f"Phương án Tái cấu trúc Vận hành Dựa trên Phân Tích {current_metric['label'] if current_metric else 'Chỉ Số'}",
-                    "description": f"Tập trung 65% nguồn lực vào nhóm {current_dimension['label'] if current_dimension else 'phân khúc'} có hiệu suất tốt nhất, đồng thời thiết lập định mức kiểm soát chặt chẽ đối với các đơn vị có chỉ số lệch chuẩn.",
-                    "action_steps": [
-                        "Thiết lập cơ chế kiểm soát chất lượng dữ liệu đầu vào theo thời gian thực (Real-time Input Validation).",
-                        "Cắt giảm 20-30% chi phí phân bổ cho các nhóm phân khúc kém hiệu quả có chỉ số ROI dưới ngưỡng an toàn.",
-                        "Triển khai chương trình chăm sóc khách hàng cá nhân hóa dựa trên cụm dữ liệu giá trị cao."
-                    ]
-                },
-                "pros_cons": {
-                    "pros": [
-                        "Thu hồi vốn nhanh, tác động trực tiếp đến dòng tiền chỉ sau 30-45 ngày.",
-                        "Tối đa hóa hiệu quả trên từng đồng chi phí marketing và vận hành.",
-                        "Quyết định dựa trên số liệu thực tế đã kiểm chứng, giảm thiểu rủi ro cảm tính."
-                    ],
-                    "cons": [
-                        "Yêu cầu đội ngũ nội bộ tuân thủ quy trình nhập liệu chuẩn hóa mới.",
-                        "Cần thời gian 2 tuần đầu để đồng bộ hóa quy trình giữa các bộ phận."
-                    ]
-                },
-                "decision_rationale": {
-                    "why_chosen": f"Phương án này giải quyết trực diện nguyên nhân gốc rễ được chỉ ra từ biểu đồ phân bổ {current_metric['label'] if current_metric else 'dữ liệu'}: hơn 70% giá trị tập trung tại các phân khúc nòng cốt. Việc can thiệp mang lại tỷ lệ lợi ích/chi phí cao nhất.",
-                    "expected_impact": "Dự kiến gia tăng biên lợi nhuận ròng từ 12% - 18%, cắt giảm tỷ lệ thất thoát/hủy đơn xuống dưới 4.5% trong vòng 1 quý tài chính."
-                },
-                "roadmap_30_60_90": {
-                    "day_30": "Mốc 30 ngày (Giai đoạn 1): Thiết lập quy chuẩn nhập liệu và ban hành định mức chi phí mới.",
-                    "day_60": "Mốc 60 ngày (Giai đoạn 2): Dịch chuyển 30-35% nguồn lực sang các nhóm mang lại ROI cao.",
-                    "day_90": "Mốc 90 ngày (Giai đoạn 3): Đo lường định lượng tăng trưởng biên lợi nhuận ròng qua Dashboard."
-                }
-            }
-
-        # Enrich overview_points with direct quantitative answers to product/time ranking questions
-        try:
-            rank_c = charts.get("ranking_bar", {})
-            line_c = charts.get("line_chart", {})
-            top_rank_lbl = rank_c.get("labels", [None])[0] if rank_c.get("labels") else None
-            top_rank_fmt = rank_c.get("formatted_values", [None])[0] if rank_c.get("formatted_values") else None
-            
-            peak_time_lbl = None
-            peak_time_val_str = None
-            if line_c.get("labels") and line_c.get("data"):
-                l_data = line_c["data"]
-                l_labels = line_c["labels"]
-                max_idx = l_data.index(max(l_data))
-                peak_time_lbl = l_labels[max_idx]
-                max_val = l_data[max_idx]
-                if current_metric and current_metric["type"] == "currency":
-                    if max_val >= 1_000_000_000:
-                        peak_time_val_str = f"{max_val / 1_000_000_000:.2f} tỷ ₫"
-                    elif max_val >= 1_000_000:
-                        peak_time_val_str = f"{max_val / 1_000_000:.1f} triệu ₫"
-                    else:
-                        peak_time_val_str = f"{max_val:,.0f} ₫"
-                else:
-                    peak_time_val_str = f"{max_val:,.1f} {current_metric['unit'] if current_metric else ''}".strip()
-
-            direct_highlights = []
-            if top_rank_lbl and top_rank_fmt:
-                direct_highlights.append(
-                    f"🏆 Quán quân xếp hạng ({current_metric['label'] if current_metric else 'Quy mô'} cao nhất): \"{top_rank_lbl}\" dẫn đầu toàn hệ thống với giá trị đạt {top_rank_fmt}."
+            else:
+                ai_pack = get_fallback_strategy(
+                    business_type=business_type,
+                    problem_statement=problem_statement,
+                    metric_label=current_metric["label"] if current_metric else "Chỉ số",
+                    dim_label=current_dimension["label"] if current_dimension else "Phân nhóm",
+                    total_records=total_records,
+                    top_breakdown=top_items,
+                    bottom_breakdown=bottom_items,
+                    math_sanity=math_sanity,
+                    deep_facts=deep_facts
                 )
-            if peak_time_lbl and peak_time_val_str:
-                direct_highlights.append(
-                    f"📅 Thời điểm / Kỳ đạt đỉnh cao nhất: Mốc \"{peak_time_lbl}\" đứng đầu về {current_metric['label'] if current_metric else 'hiệu suất'} với quy mô đạt {peak_time_val_str}."
-                )
-            if direct_highlights:
-                overview_points = direct_highlights + list(overview_points[:3])
+            self.cached_overview = ai_pack.get("overview_points", [])
+            self.cached_strategy = ai_pack.get("strategy", {})
+            self.cached_executive_summary = ai_pack.get("executive_summary")
+            self.cached_key_findings = ai_pack.get("key_findings")
+            self.cached_data_integrity_summary = ai_pack.get("data_integrity_summary")
         except Exception:
             pass
+
+        strategy = self.cached_strategy or {}
+        overview_points = self.cached_overview or [
+            f"Dữ liệu doanh nghiệp sau chuẩn hóa đạt trạng thái nhất quán 100% trên {total_records:,} bản ghi hợp lệ."
+        ]
 
         return {
             "kpis": kpis,
