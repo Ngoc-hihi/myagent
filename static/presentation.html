@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo Cáo Thuyết Trình AI Agent - PHAMHAANHNGOC | Đồ Án AI301</title>
+  <!-- Favicon: Cute Peach-Coral AI Data Assistant Logo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FF6B6B'/%3E%3Cstop offset='50%25' stop-color='%23FF8E53'/%3E%3Cstop offset='100%25' stop-color='%23FFB88C'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='44' height='44' rx='13' fill='url(%23g)'/%3E%3Cline x1='22' y1='4.8' x2='22' y2='9.8' stroke='%23FFF' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='4' r='2.4' fill='%23FFF5E4'/%3E%3Crect x='7' y='9.5' width='30' height='21.5' rx='10.75' fill='%23FFF'/%3E%3Ccircle cx='16.2' cy='18.2' r='2.4' fill='%23FF5E62'/%3E%3Ccircle cx='27.8' cy='18.2' r='2.4' fill='%23FF5E62'/%3E%3Cpath d='M19.2 20.6Q22 23.2 24.8 20.6' stroke='%23FF5E62' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Crect x='16' y='34' width='2.6' height='3.5' rx='1' fill='%23FFF'/%3E%3Crect x='20.7' y='32' width='2.6' height='5.5' rx='1' fill='%23FFF'/%3E%3Crect x='25.4' y='30' width='2.6' height='7.5' rx='1' fill='%23FFF'/%3E%3C/svg%3E">
+  
+  <!-- Google Fonts: Nunito & Lexend (Soft, Rounded, Modern & Native Vietnamese) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===================================================
+       THEME VARIABLES - WARM CORAL & SOFT CLAYMORPHIC
+       =================================================== */
+    :root {
+      --primary-coral: #FF5E62;
+      --primary-gradient: linear-gradient(135deg, #FF6B8B 0%, #FF8E53 100%);
+      --primary-gradient-hover: linear-gradient(135deg, #FF5579 0%, #FF7F3F 100%);
+      --primary-soft: #FFF0F2;
+      --primary-glow: rgba(255, 107, 107, 0.28);
+      
+      --bg-page: #FAF4F3;
+      --bg-card: #FFFFFF;
+      --bg-card-subtle: #FFF9F9;
+      --text-dark: #1E202E;
+      --text-body: #373A4D;
+      --text-muted: #6B7280;
+      
+      --border-card: rgba(255, 107, 107, 0.22);
+      --border-soft: #F2E3E4;
+      
+      --shadow-clay: 0 16px 36px rgba(255, 107, 107, 0.1), 0 2px 8px rgba(0, 0, 0, 0.03);
+      --shadow-hover: 0 20px 48px rgba(255, 107, 107, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+
+      --font-main: 'Nunito', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main) !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      background: #181920;
+      color: var(--text-dark);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    /* 16:9 Presentation Slide Canvas */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 177.78vh; /* 16:9 ratio */
+      max-height: 56.25vw;
+      background: var(--bg-page);
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+      border-radius: 14px;
+    }
+
+    @media (min-aspect-ratio: 16/9) {
+      .deck-container {
+        height: 100vh;
+        width: calc(100vh * 16 / 9);
+      }
+    }
+    @media (max-aspect-ratio: 16/9) {
+      .deck-container {
+        width: 100vw;
+        height: calc(100vw * 9 / 16);
+      }
+    }
+
+    /* Top Slide Progress Bar */
+    .progress-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 107, 107, 0.12);
+      z-index: 100;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 12.5%;
+      background: var(--primary-gradient);
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Individual Slide Frame */
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 3.5% 5.5% 6.5%;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--bg-page);
+      opacity: 0;
+      transition: opacity 0.28s ease;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: scale(0.985); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Slide Header Topbar */
+    .slide-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      background: var(--primary-gradient);
+      color: #FFFFFF;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 19px;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .brand-text {
+      font-weight: 900;
+      font-size: 1.25rem;
+      letter-spacing: -0.3px;
+      color: var(--text-dark);
+    }
+
+    .badge-course {
+      font-size: 0.85rem;
+      color: var(--primary-coral);
+      font-weight: 800;
+      background: var(--primary-soft);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 94, 98, 0.25);
+    }
+
+    .slide-topic-badge {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* Slide Title Area */
+    .slide-header-block {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .slide-tagline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--primary-coral);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title-text {
+      font-size: 2.15rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+    }
+
+    .slide-desc-text {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ===================================================
+       COVER SLIDE
+       =================================================== */
+    .cover-slide {
+      background: linear-gradient(135deg, #FFF6F6 0%, #FFFFFF 50%, #FFF2F4 100%);
+      justify-content: space-between;
+    }
+
+    .cover-body {
+      margin: auto 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    .cover-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      border: 1.5px solid rgba(255, 94, 98, 0.35);
+      padding: 8px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary-coral);
+      box-shadow: 0 4px 16px rgba(255, 94, 98, 0.12);
+      margin-bottom: 22px;
+    }
+
+    .cover-heading-main {
+      font-size: 3.3rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      line-height: 1.18;
+      letter-spacing: -1px;
+      margin-bottom: 18px;
+    }
+
+    .gradient-text {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cover-desc-lead {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 860px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 820px;
+      background: #FFFFFF;
+      padding: 20px 28px;
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--border-card);
+      box-shadow: var(--shadow-clay);
+    }
+
+    .meta-col-lbl {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.6px;
+    }
+
+    .meta-col-val {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      margin-top: 3px;
+    }
+
+    /* ===================================================
+       CARDS GRIDS
+       =================================================== */
+    .cards-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .cards-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .slide-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 26px 22px;
+      box-shadow: var(--shadow-clay);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: all 0.22s ease;
+    }
+
+    .slide-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-coral);
+    }
+
+    .card-icon-round {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: #FFF4F5;
+      border: 1px solid rgba(255, 94, 98, 0.3);
+      color: var(--primary-coral);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(255, 94, 98, 0.12);
+      flex-shrink: 0;
+    }
+
+    .card-title-lg {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .card-body-text {
+      font-size: 1.02rem;
+      color: var(--text-body);
+      line-height: 1.6;
+    }
+
+    .card-pill-footer {
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 800;
+      background: var(--primary-soft);
+      color: var(--primary-coral);
+      border: 1px solid rgba(255, 94, 98, 0.25);
+    }
+
+    /* ===================================================
+       SLIDE 3: VISUAL PIPELINE FLOWCHART (SƠ ĐỒ QUY TRÌNH)
+       =================================================== */
+    .flowchart-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .flowchart-nodes-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      position: relative;
+    }
+
+    .flow-node-card {
+      background: #FFFFFF;
+      border: 2px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+      box-shadow: var(--shadow-clay);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    .flow-node-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary-coral);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Flow connector arrows between cards */
+    .flow-node-card:not(:last-child)::after {
+      content: "➔";
+      position: absolute;
+      right: -13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: var(--primary-gradient);
+      color: #FFFFFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 2px 8px var(--primary-glow);
+      z-index: 5;
+    }
+
+    .flow-node-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      border: 1px solid rgba(255, 94, 98, 0.3);
+      color: var(--primary-coral);
+      font-weight: 900;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .flow-node-title {
+      font-size: 1.08rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .flow-node-desc {
+      font-size: 0.92rem;
+      color: var(--text-body);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+
+    .flow-node-tech {
+      background: #FFF8F9;
+      border: 1px dashed rgba(255, 94, 98, 0.35);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--primary-coral);
+      align-self: flex-start;
+    }
+
+    .flowchart-bottom-summary {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-clay);
+    }
+
+    .flow-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .flow-stat-icon {
+      font-size: 22px;
+    }
+
+    .flow-stat-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .flow-stat-val {
+      font-size: 1.12rem;
+      font-weight: 900;
+      color: var(--text-dark);
+    }
+
+    /* ===================================================
+       BENCHMARK COMPARISON TABLE
+       =================================================== */
+    .compare-table-box {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 8px;
+      box-shadow: var(--shadow-clay);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .compare-tbl {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .compare-tbl th {
+      background: #FFF4F6;
+      padding: 14px 20px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--primary-coral);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1.5px solid var(--border-card);
+      text-align: left;
+    }
+
+    .compare-tbl th:first-child { border-top-left-radius: var(--radius-md); }
+    .compare-tbl th:last-child { border-top-right-radius: var(--radius-md); }
+
+    .compare-tbl td {
+      padding: 15px 20px;
+      font-size: 1.02rem;
+      color: var(--text-body);
+      border-bottom: 1px solid #F6EBEB;
+    }
+
+    .compare-tbl tr:last-child td { border-bottom: none; }
+
+    .tag-danger {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: #FEE2E2;
+      color: #DC2626;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .tag-success {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: #DCFCE7;
+      color: #16A34A;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    /* ===================================================
+       FLOATING CONTROLS DOCK
+       =================================================== */
+    .controls-dock {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 94, 98, 0.3);
+      border-radius: var(--radius-pill);
+      padding: 6px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+    }
+
+    .ctrl-circle-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 900;
+      transition: all 0.2s ease;
+    }
+
+    .ctrl-circle-btn:hover {
+      background: var(--primary-coral);
+      color: #FFFFFF;
+      border-color: var(--primary-coral);
+      transform: scale(1.1);
+    }
+
+    .slide-page-indicator {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+      min-width: 68px;
+      text-align: center;
+    }
+
+    .ctrl-pill-btn {
+      background: var(--primary-soft);
+      border: 1px solid rgba(255, 94, 98, 0.3);
+      color: var(--primary-coral);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .ctrl-pill-btn:hover {
+      background: var(--primary-coral);
+      color: #FFFFFF;
+    }
+
+    .ctrl-pill-btn.btn-demo-link {
+      background: var(--primary-gradient);
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .ctrl-pill-btn.btn-demo-link:hover {
+      box-shadow: 0 6px 18px rgba(255, 94, 98, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* SLIDE DRAWER / MENU */
+    .drawer-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      z-index: 1001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .drawer-card-box {
+      background: #FFFFFF;
+      border-radius: var(--radius-xl);
+      width: 900px;
+      max-width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    .drawer-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .drawer-heading {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--text-dark);
+    }
+
+    .drawer-grid-items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .drawer-item-box {
+      background: #FAF9F9;
+      border: 1.5px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .drawer-item-box:hover, .drawer-item-box.active {
+      border-color: var(--primary-coral);
+      background: var(--primary-soft);
+      transform: translateY(-2px);
+    }
+
+    .drawer-item-num {
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: var(--primary-coral);
+    }
+
+    .drawer-item-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container" id="deckContainer">
+    <!-- Top Slide Progress -->
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- ===================================================
+         SLIDE 1: COVER
+         =================================================== -->
+    <section class="slide cover-slide active" data-slide="1">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+          <span class="badge-course">Học Phần AI301</span>
+        </div>
+        <div class="slide-topic-badge">BÁO CÁO BẢO VỆ ĐỒ ÁN • NĂM 2026</div>
+      </div>
+
+      <div class="cover-body">
+        <div class="cover-pill-badge">
+          <span>✨</span>
+          <span>ĐỒ ÁN PHÁT TRIỂN AGENT TRÍ TUỆ NHÂN TẠO CHUYÊN BIỆT</span>
+        </div>
+        <h1 class="cover-heading-main">
+          NỀN TẢNG <span class="gradient-text">AI AGENT</span><br>
+          XỬ LÝ DỮ LIỆU & CỐ VẤN CHIẾN LƯỢC C-LEVEL
+        </h1>
+        <p class="cover-desc-lead">
+          Giải pháp tự hành hóa toàn diện từ làm sạch dữ liệu thô, thẩm định chỉ số sức khỏe Data Health và kiến tạo khuyến nghị hành động chiến lược kinh doanh được tối ưu hóa bởi Google Gemini AI.
+        </p>
+
+        <div class="cover-meta-grid">
+          <div>
+            <div class="meta-col-lbl">Sinh viên thực hiện</div>
+            <div class="meta-col-val">Phạm Hà Ánh Ngọc</div>
+          </div>
+          <div>
+            <div class="meta-col-lbl">Học phần môn học</div>
+            <div class="meta-col-val">AI301 - AI Agent</div>
+          </div>
+          <div>
+            <div class="meta-col-lbl">Giảng viên hướng dẫn</div>
+            <div class="meta-col-val">Bộ môn Trí Tuệ Nhân Tạo</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 2: BỐI CẢNH & THÁCH THỨC
+         =================================================== -->
+    <section class="slide" data-slide="2">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+        </div>
+        <div class="slide-topic-badge">01. BỐI CẢNH & ĐẶT VẤN ĐỀ</div>
+      </div>
+
+      <div class="slide-header-block">
+        <div class="slide-tagline-pill"><span>⚠️</span> THỰC TRẠNG QUẢN TRỊ DỮ LIỆU DOANH NGHIỆP</div>
+        <h2 class="slide-title-text">Khoảng Trống Lớn Giữa Dữ Liệu Thô & Quyết Định Chiến Lược</h2>
+        <p class="slide-desc-text">Hơn 85% doanh nghiệp SMEs tại Việt Nam gặp bế tắc khi đối chiếu dữ liệu kinh doanh phân mảnh cuối tháng.</p>
+      </div>
+
+      <div class="cards-grid-3">
+        <div class="slide-card">
+          <div class="card-icon-round">🌪️</div>
+          <h3 class="card-title-lg">Dữ Liệu Thô Hỗn Loạn & Lỗi</h3>
+          <p class="card-body-text">
+            Hóa đơn trùng lặp, số tiền âm do thao tác hoàn hủy, sai lệch công thức <em>Thành tiền ≠ Số lượng × Đơn giá</em>, định dạng ngày tháng đảo lộn giữa các cơ sở.
+          </p>
+          <div class="card-pill-footer">Chiếm 15% - 25% bản ghi</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="card-icon-round">⏳</div>
+          <h3 class="card-title-lg">Xử Lý Thủ Công Tốn Kém</h3>
+          <p class="card-body-text">
+            Kế toán và chuyên viên BI phải mất <strong>3 đến 5 ngày</strong> cuối mỗi kỳ để lọc Excel bằng tay. Dễ xảy ra sai sót con người và gây kiệt quệ nguồn lực vận hành.
+          </p>
+          <div class="card-pill-footer">Mất 40h/tháng đối soát</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="card-icon-round">📉</div>
+          <h3 class="card-title-lg">Mất Cơ Hội Ra Quyết Định</h3>
+          <p class="card-body-text">
+            Dữ liệu bẩn dẫn đến biểu đồ sai lệch. Ban Tổng Giám đốc không thể nhìn thấy điểm rò rỉ chi phí thực tế và bỏ lỡ thời điểm vàng để tái cơ cấu kinh doanh.
+          </p>
+          <div class="card-pill-footer">Quyết định chậm trễ</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 3: SƠ ĐỒ QUY TRÌNH XỬ LÝ DỮ LIỆU TỰ ĐỘNG (KEY DIAGRAM!)
+         =================================================== -->
+    <section class="slide" data-slide="3">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+        </div>
+        <div class="slide-topic-badge">02. SƠ ĐỒ QUY TRÌNH XỬ LÝ DỮ LIỆU (DATA PIPELINE)</div>
+      </div>
+
+      <div class="slide-header-block">
+        <div class="slide-tagline-pill"><span>🔄</span> KIẾN TRÚC LUỒNG XỬ LÝ DỮ LIỆU TỰ ĐỘNG ĐẦU-CUỐI</div>
+        <h2 class="slide-title-text">Sơ Đồ 5 Giai Đoạn Chuẩn Hóa & Chuyển Đổi Dữ Liệu</h2>
+        <p class="slide-desc-text">Mô hình tuần tự khép kín: Tự động phát hiện lỗi, tính toán lại số học, chấm điểm và chuyển hóa thành quyết định chiến lược.</p>
+      </div>
+
+      <div class="flowchart-container">
+        <!-- 5 STAGE FLOWCHART NODES -->
+        <div class="flowchart-nodes-row">
+          <div class="flow-node-card">
+            <div class="flow-node-num">01</div>
+            <h4 class="flow-node-title">Nạp & Ép Kiểu An Toàn</h4>
+            <p class="flow-node-desc">Đọc file .xlsx, .csv, .json. Ép kiểu <code>object</code> chống crash StringDtype Pandas 2.2+.</p>
+            <span class="flow-node-tech">Pandas 2.2+ Engine</span>
+          </div>
+
+          <div class="flow-node-card">
+            <div class="flow-node-num">02</div>
+            <h4 class="flow-node-title">Làm Sạch Chuẩn Hóa</h4>
+            <p class="flow-node-desc">Khử trùng, xóa khoảng trắng thừa, nhận diện ngày <code>yyyyMMdd</code> ➔ ISO 8601, bóc tách tiền tệ.</p>
+            <span class="flow-node-tech">Smart Parser</span>
+          </div>
+
+          <div class="flow-node-card">
+            <div class="flow-node-num">03</div>
+            <h4 class="flow-node-title">Sửa Âm & Lệch Số</h4>
+            <p class="flow-node-desc">Chuyển số âm bất hợp lý thành dương. Tự động tính lại: <em>Thành tiền = SL × Đơn giá</em>.</p>
+            <span class="flow-node-tech">Auto Math Check</span>
+          </div>
+
+          <div class="flow-node-card">
+            <div class="flow-node-num">04</div>
+            <h4 class="flow-node-title">Chấm Điểm Data Health</h4>
+            <p class="flow-node-desc">Định lượng độ toàn vẹn theo chuẩn DAMA-DMBOK từ 0 - 100 điểm trước và sau làm sạch.</p>
+            <span class="flow-node-tech">DAMA-DMBOK 99.8%</span>
+          </div>
+
+          <div class="flow-node-card">
+            <div class="flow-node-num">05</div>
+            <h4 class="flow-node-title">Dashboard & Cố Vấn AI</h4>
+            <p class="flow-node-desc">Trực quan hóa 4 biểu đồ đa chiều (Biểu đồ Đường xu hướng, Thanh ngang xếp hạng, Cột phân nhóm, Tỷ trọng kép Số &amp; %). Cố vấn Senior Business Analyst xuất Word C-Level.</p>
+            <span class="flow-node-tech">Gemini &amp; C-Level Engine</span>
+          </div>
+        </div>
+
+        <!-- FLOWCHART METRICS SUMMARY BAR -->
+        <div class="flowchart-bottom-summary">
+          <div class="flow-stat-item">
+            <span class="flow-stat-icon">📥</span>
+            <div>
+              <div class="flow-stat-title">Dữ Liệu Đầu Vào</div>
+              <div class="flow-stat-val">10,000+ bản ghi hỗn tạp</div>
+            </div>
+          </div>
+          <div class="flow-stat-item">
+            <span class="flow-stat-icon">⚡</span>
+            <div>
+              <div class="flow-stat-title">Thời Gian Thực Thi</div>
+              <div class="flow-stat-val">&lt; 1.8 giây tự động</div>
+            </div>
+          </div>
+          <div class="flow-stat-item">
+            <span class="flow-stat-icon">🎯</span>
+            <div>
+              <div class="flow-stat-title">Độ Chính Xác Chuẩn Hóa</div>
+              <div class="flow-stat-val" style="color: #10B981;">99.8% Sạch & Nhất quán</div>
+            </div>
+          </div>
+          <div class="flow-stat-item">
+            <span class="flow-stat-icon">📑</span>
+            <div>
+              <div class="flow-stat-title">Đầu Ra Báo Cáo</div>
+              <div class="flow-stat-val">Bản Word C-Level + Pros & Cons</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 4: QUY TRÌNH 4 BƯỚC VẬN HÀNH DÀNH CHO USER
+         =================================================== -->
+    <section class="slide" data-slide="4">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+        </div>
+        <div class="slide-topic-badge">03. WORKFLOW NGƯỜI DÙNG</div>
+      </div>
+
+      <div class="slide-header-block">
+        <div class="slide-tagline-pill"><span>🚀</span> TRẢI NGHIỆM NGƯỜI DÙNG TINH GỌN</div>
+        <h2 class="slide-title-text">Quy Trình 4 Bước Hoàn Chỉnh Từ Dữ Liệu Đến Quyết Định</h2>
+        <p class="slide-desc-text">Thiết kế thân thiện cho người quản lý nghiệp vụ, không đòi hỏi kiến thức lập trình phức tạp.</p>
+      </div>
+
+      <div class="cards-grid-4">
+        <div class="slide-card">
+          <div class="flow-node-num">1</div>
+          <h3 class="card-title-lg">Khai Báo Bối Cảnh</h3>
+          <p class="card-body-text">
+            Khai báo ngành nghề (Chuỗi F&B, Bán lẻ, SaaS, Logistics) và vấn đề nhức nhối (Hao hụt chi phí, Tỷ lệ hủy đơn, Khách hàng rời bỏ).
+          </p>
+          <div class="card-pill-footer">Định hướng AI Agent</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="flow-node-num">2</div>
+          <h3 class="card-title-lg">Nạp File Dữ Liệu</h3>
+          <p class="card-body-text">
+            Kéo thả tệp dữ liệu thô (.xlsx, .csv, .json) hoặc trải nghiệm ngay 3 bộ dữ liệu mẫu thực tế đã được chuẩn bị sẵn.
+          </p>
+          <div class="card-pill-footer">Đa định dạng tệp tin</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="flow-node-num">3</div>
+          <h3 class="card-title-lg">Làm Sạch & HITL</h3>
+          <p class="card-body-text">
+            Hệ thống phát hiện lỗi, khử số âm và hiển thị bảng đối chiếu màu sắc (Diff View) để con người kiểm duyệt trước khi đồng ý.
+          </p>
+          <div class="card-pill-footer">Human-in-the-Loop</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="flow-node-num">4</div>
+          <h3 class="card-title-lg">Chiến Lược & Báo Cáo</h3>
+          <p class="card-body-text">
+            Khám phá 4 biểu đồ đa chiều (Biểu đồ Đường xu hướng, Xếp hạng thanh ngang, Cột phân nhóm, Tỷ trọng kép Số &amp; %), nhận khuyến nghị định lượng chuẩn C-Level và tải trọn gói báo cáo Word hoàn chỉnh.
+          </p>
+          <div class="card-pill-footer">Ra quyết định tức thì</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 5: KIẾN TRÚC KỸ THUẬT & ĐIỂM SÁNG
+         =================================================== -->
+    <section class="slide" data-slide="5">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+        </div>
+        <div class="slide-topic-badge">04. KIẾN TRÚC HỆ THỐNG</div>
+      </div>
+
+      <div class="slide-header-block">
+        <div class="slide-tagline-pill"><span>⚙️</span> CÔNG NGHỆ & ĐIỂM SÁNG KỸ THUẬT</div>
+        <h2 class="slide-title-text">Kiến Trúc Đa Tầng Bền Bỉ, An Toàn & Sẵn Sàng Mở Rộng</h2>
+        <p class="slide-desc-text">Tối ưu hóa khả năng vận hành ổn định từ môi trường máy chủ cục bộ (Localhost:8000) đến hạ tầng đám mây Serverless.</p>
+      </div>
+
+      <div class="cards-grid-3">
+        <div class="slide-card">
+          <div class="card-icon-round">🧠</div>
+          <h3 class="card-title-lg">Google Gemini 3.5 Flash Model</h3>
+          <p class="card-body-text">
+            Mô hình AI thế hệ mới với kỹ thuật Context Injection bối cảnh kinh doanh sâu. Suy luận chiến lược sắc bén theo 4 trụ cột: <em>Doanh thu, Chi phí, Khách hàng, Vận hành</em> kèm dự báo rủi ro.
+          </p>
+          <div class="card-pill-footer">Trí tuệ nhân tạo thế hệ mới</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="card-icon-round">🛡️</div>
+          <h3 class="card-title-lg">Thuật Toán An Toàn Pandas 2.2+</h3>
+          <p class="card-body-text">
+            Khắc phục triệt để lỗi StringDtype khi đọc ngày tháng dạng `yyyyMMdd` và tiền tệ hỗn hợp. Tự động kiểm tra chéo toán học và tái tạo dữ liệu không bao giờ gây gián đoạn máy chủ.
+          </p>
+          <div class="card-pill-footer">Type Safety 100% Chống Crash</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="card-icon-round">🤖</div>
+          <h3 class="card-title-lg">Trợ Lý Ảo AI Tích Hợp 24/7</h3>
+          <p class="card-body-text">
+            Widget chat nổi thông minh giải đáp 6 bộ câu hỏi FAQ chuẩn hóa (Bảo mật, Dung lượng tệp, Công thức Health Score) kết hợp đối thoại trực tuyến trả lời mọi thắc mắc của khách hàng.
+          </p>
+          <div class="card-pill-footer">Hỗ trợ khách hàng 24/7</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 6: KẾT QUẢ ĐO LƯỜNG THỰC NGHIỆM
+         =================================================== -->
+    <section class="slide" data-slide="6">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+        </div>
+        <div class="slide-topic-badge">05. ĐO LƯỜNG HIỆU QUẢ</div>
+      </div>
+
+      <div class="slide-header-block">
+        <div class="slide-tagline-pill"><span>📈</span> BẢNG ĐỐI CHIẾU HIỆU SUẤT THỰC NGHIỆM</div>
+        <h2 class="slide-title-text">Minh Chứng Tác Động Vượt Trội Trước & Sau Khi Ứng Dụng Agent</h2>
+        <p class="slide-desc-text">Kết quả kiểm thử thực nghiệm trên tập dữ liệu chuỗi F&B 1,000+ hóa đơn với nhiều lỗi sai lệch phức tạp.</p>
+      </div>
+
+      <div class="compare-table-box">
+        <table class="compare-tbl">
+          <thead>
+            <tr>
+              <th style="width: 28%;">Tiêu Chí Đánh Giá</th>
+              <th style="width: 36%;">Quy Trình Thủ Công (Excel)</th>
+              <th style="width: 36%;">Nền Tảng AI PHAMHAANHNGOC</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Thời gian làm sạch 5,000 dòng</strong></td>
+              <td><span class="tag-danger">⚠️ 3 - 4 ngày làm việc</span></td>
+              <td><span class="tag-success">✅ &lt; 2.0 giây (Giảm 99.9% thời gian)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Chỉ số chất lượng (Data Health)</strong></td>
+              <td><span class="tag-danger">⚠️ ~62.5% (Tồn dư số âm, lệch số)</span></td>
+              <td><span class="tag-success">✅ 99.8% (Đạt chuẩn DAMA-DMBOK)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Khử số âm & kiểm tra thành tiền</strong></td>
+              <td><span class="tag-danger">⚠️ Bỏ sót 12% - 15% lỗi nhập</span></td>
+              <td><span class="tag-success">✅ 100% Thuật toán kiểm tra chéo tự động</span></td>
+            </tr>
+            <tr>
+              <td><strong>Thời gian tạo Báo cáo HĐQT</strong></td>
+              <td><span class="tag-danger">⚠️ Mất 4 - 6 giờ soạn thảo Word</span></td>
+              <td><span class="tag-success">✅ 1 nhấp chuột (3 giây xuất file Word)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Khuyến nghị hành động kinh doanh</strong></td>
+              <td><span class="tag-danger">⚠️ Thụ động, thiếu tính dự báo</span></td>
+              <td><span class="tag-success">✅ Gemini AI phân tích 4 trụ cột & lộ trình 90 ngày</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 7: LỘ TRÌNH PHÁT TRIỂN & MỞ RỘNG
+         =================================================== -->
+    <section class="slide" data-slide="7">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+        </div>
+        <div class="slide-topic-badge">06. HƯỚNG PHÁT TRIỂN</div>
+      </div>
+
+      <div class="slide-header-block">
+        <div class="slide-tagline-pill"><span>🔮</span> TẦM NHÌN TƯƠNG LAI</div>
+        <h2 class="slide-title-text">Lộ Trình Nâng Cấp Hệ Sinh Thái Dữ Liệu Thông Minh</h2>
+        <p class="slide-desc-text">Định hướng nâng cấp nền tảng từ công cụ xử lý tệp tin sang hệ thống quản trị dữ liệu thông minh toàn diện.</p>
+      </div>
+
+      <div class="cards-grid-3">
+        <div class="slide-card">
+          <div class="card-icon-round">🔌</div>
+          <h3 class="card-title-lg">Kết Nối Data Warehouse</h3>
+          <p class="card-body-text">
+            Tích hợp trực tiếp các kết nối cơ sở dữ liệu lớn (PostgreSQL, BigQuery, Snowflake) để làm sạch và cập nhật dữ liệu tự động theo thời gian thực (Streaming ETL).
+          </p>
+          <div class="card-pill-footer">Giai đoạn 1 (Q1/2027)</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="card-icon-round">📊</div>
+          <h3 class="card-title-lg">Dự Báo Chuỗi Thời Gian</h3>
+          <p class="card-body-text">
+            Bổ sung mô hình Machine Learning dự báo nhu cầu nguyên vật liệu F&B và dự báo doanh thu 30 ngày tiếp theo bằng thuật toán Prophet / LSTM chuyên sâu.
+          </p>
+          <div class="card-pill-footer">Giai đoạn 2 (Q2/2027)</div>
+        </div>
+
+        <div class="slide-card">
+          <div class="card-icon-round">👥</div>
+          <h3 class="card-title-lg">Phân Quyền & Báo Cáo Tự Động</h3>
+          <p class="card-body-text">
+            Thiết lập cơ chế phân quyền bảo mật nhiều tầng (RBAC) cho từng phòng ban và tự động gửi email tóm tắt báo cáo hàng tuần lên Ban Tổng Giám đốc.
+          </p>
+          <div class="card-pill-footer">Giai đoạn 3 (Q3/2027)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 8: KẾT LUẬN & TRI ÂN
+         =================================================== -->
+    <section class="slide cover-slide" data-slide="8">
+      <div class="slide-topbar">
+        <div class="brand-group">
+          <div class="brand-mark">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE"/>
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <span class="brand-text">PHAMHAANHNGOC</span>
+          <span class="badge-course">Học Phần AI301</span>
+        </div>
+        <div class="slide-topic-badge">KẾT LUẬN & HỎI ĐÁP (Q&A)</div>
+      </div>
+
+      <div class="cover-body">
+        <div class="cover-pill-badge">
+          <span>🎓</span>
+          <span>HOÀN THÀNH BẢO VỆ ĐỒ ÁN MÔN HỌC</span>
+        </div>
+        <h1 class="cover-heading-main">
+          XIN TRÂN TRỌNG CẢM ƠN<br>
+          <span class="gradient-text">QUÝ THẦY CÔ & HỘI ĐỒNG!</span>
+        </h1>
+        <p class="cover-desc-lead">
+          Dự án <strong>PHAMHAANHNGOC</strong> khẳng định tiềm năng vượt trội của AI Agent trong việc giải phóng sức lao động con người, biến dữ liệu hỗn loạn thành tài sản chiến lược quý giá cho doanh nghiệp.
+        </p>
+
+        <div class="cover-meta-grid">
+          <div>
+            <div class="meta-col-lbl">Sinh viên thuyết trình</div>
+            <div class="meta-col-val">Phạm Hà Ánh Ngọc</div>
+          </div>
+          <div>
+            <div class="meta-col-lbl">Ứng dụng trực tuyến</div>
+            <div class="meta-col-val" style="color: #10B981;">● Sẵn sàng Live Demo</div>
+          </div>
+          <div>
+            <div class="meta-col-lbl">Phiên Vấn Đáp</div>
+            <div class="meta-col-val" style="color: var(--primary-coral);">Q&A Session</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FLOATING CONTROLS DOCK (PAGINATION CONTROLS) -->
+  <div class="controls-dock">
+    <button class="ctrl-circle-btn" id="btnPrevSlide" title="Trang trước (Phím ◀ hoặc Mũi tên Trái)">◀</button>
+    <div class="slide-page-indicator" id="slideCounter">01 / 08</div>
+    <button class="ctrl-circle-btn" id="btnNextSlide" title="Trang sau (Phím ▶, Space hoặc Mũi tên Phải)">▶</button>
+    
+    <button class="ctrl-pill-btn" id="btnToggleDrawer" title="Xem danh sách các slide">
+      <span>☰</span> Mục lục
+    </button>
+    
+    <button class="ctrl-pill-btn" id="btnFullscreen" title="Toàn màn hình trình chiếu (F11 hoặc Phím F)">
+      <span>⛶</span> Toàn màn hình
+    </button>
+
+    <a href="https://phamhaanhngoc.vercel.app/" target="_blank" class="ctrl-pill-btn btn-demo-link" title="Khởi chạy ứng dụng trực tuyến trên Vercel Cloud">
+      <span>🚀</span> Live Demo
+    </a>
+  </div>
+
+  <!-- SLIDE DRAWER / THUMBNAILS MODAL -->
+  <div class="drawer-overlay" id="drawerBackdrop">
+    <div class="drawer-card-box">
+      <div class="drawer-header-row">
+        <div class="drawer-heading">📑 Mục Lục Các Trang Thuyết Trình</div>
+        <button class="ctrl-circle-btn" id="btnCloseDrawer">✕</button>
+      </div>
+      <div class="drawer-grid-items" id="drawerGrid">
+        <div class="drawer-item-box active" data-target="1">
+          <div class="drawer-item-num">01</div>
+          <div class="drawer-item-name">Trang Bìa Đề Tài</div>
+        </div>
+        <div class="drawer-item-box" data-target="2">
+          <div class="drawer-item-num">02</div>
+          <div class="drawer-item-name">Bối Cảnh & Vấn Đề</div>
+        </div>
+        <div class="drawer-item-box" data-target="3">
+          <div class="drawer-item-num">03</div>
+          <div class="drawer-item-name">Sơ Đồ Quy Trình Xử Lý</div>
+        </div>
+        <div class="drawer-item-box" data-target="4">
+          <div class="drawer-item-num">04</div>
+          <div class="drawer-item-name">Quy Trình 4 Bước</div>
+        </div>
+        <div class="drawer-item-box" data-target="5">
+          <div class="drawer-item-num">05</div>
+          <div class="drawer-item-name">Kiến Trúc Kỹ Thuật</div>
+        </div>
+        <div class="drawer-item-box" data-target="6">
+          <div class="drawer-item-num">06</div>
+          <div class="drawer-item-name">Đo Lường Hiệu Quả</div>
+        </div>
+        <div class="drawer-item-box" data-target="7">
+          <div class="drawer-item-num">07</div>
+          <div class="drawer-item-name">Lộ Trình Mở Rộng</div>
+        </div>
+        <div class="drawer-item-box" data-target="8">
+          <div class="drawer-item-num">08</div>
+          <div class="drawer-item-name">Kết Luận & Q&A</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Slide Presentation Engine
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    const slides = document.querySelectorAll(".slide");
+    const progressFill = document.getElementById("progressFill");
+    const slideCounter = document.getElementById("slideCounter");
+    const btnPrevSlide = document.getElementById("btnPrevSlide");
+    const btnNextSlide = document.getElementById("btnNextSlide");
+    const btnFullscreen = document.getElementById("btnFullscreen");
+    const btnToggleDrawer = document.getElementById("btnToggleDrawer");
+    const btnCloseDrawer = document.getElementById("btnCloseDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerItems = document.querySelectorAll(".drawer-item-box");
+
+    function goToSlide(slideNum) {
+      if (slideNum < 1 || slideNum > totalSlides) return;
+      currentSlide = slideNum;
+
+      // Update slide active state
+      slides.forEach(slide => {
+        const num = parseInt(slide.getAttribute("data-slide"), 10);
+        if (num === currentSlide) {
+          slide.classList.add("active");
+        } else {
+          slide.classList.remove("active");
+        }
+      });
+
+      // Update progress bar
+      const pct = (currentSlide / totalSlides) * 100;
+      progressFill.style.width = pct + "%";
+
+      // Update counter
+      slideCounter.textContent = `${String(currentSlide).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+
+      // Update drawer active item
+      drawerItems.forEach(item => {
+        const target = parseInt(item.getAttribute("data-target"), 10);
+        if (target === currentSlide) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        goToSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        goToSlide(currentSlide - 1);
+      }
+    }
+
+    // Button event listeners
+    btnNextSlide.addEventListener("click", nextSlide);
+    btnPrevSlide.addEventListener("click", prevSlide);
+
+    // Keyboard navigation: Left/Right arrows, Space, PageUp/PageDown, Home/End
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        goToSlide(1);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        goToSlide(totalSlides);
+      } else if (e.key === "f" || e.key === "F") {
+        toggleFullscreen();
+      } else if (e.key === "Escape") {
+        closeDrawer();
+      }
+    });
+
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("Fullscreen request error:", err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    btnFullscreen.addEventListener("click", toggleFullscreen);
+
+    // Drawer Toggle
+    function openDrawer() {
+      drawerBackdrop.style.display = "flex";
+    }
+
+    function closeDrawer() {
+      drawerBackdrop.style.display = "none";
+    }
+
+    btnToggleDrawer.addEventListener("click", openDrawer);
+    btnCloseDrawer.addEventListener("click", closeDrawer);
+    drawerBackdrop.addEventListener("click", (e) => {
+      if (e.target === drawerBackdrop) closeDrawer();
+    });
+
+    drawerItems.forEach(item => {
+      item.addEventListener("click", () => {
+        const target = parseInt(item.getAttribute("data-target"), 10);
+        goToSlide(target);
+        closeDrawer();
+      });
+    });
+
+    // Touch swipe support for tablet / touchscreens
+    let touchStartX = 0;
+    window.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diffX = touchEndX - touchStartX;
+      if (Math.abs(diffX) > 50) {
+        if (diffX < 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    // Initial state
+    goToSlide(1);
+  </script>
+</body>
+</html>

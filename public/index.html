@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHAMHAANHNGOC - Nền Tảng Xử Lý Dữ Liệu & Trí Tuệ Doanh Nghiệp</title>
+  <!-- Favicon: Cute Peach-Coral AI Data Assistant Logo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FF6B6B'/%3E%3Cstop offset='50%25' stop-color='%23FF8E53'/%3E%3Cstop offset='100%25' stop-color='%23FFB88C'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='44' height='44' rx='13' fill='url(%23g)'/%3E%3Cline x1='22' y1='4.8' x2='22' y2='9.8' stroke='%23FFF' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='4' r='2.4' fill='%23FFF5E4'/%3E%3Crect x='7' y='9.5' width='30' height='21.5' rx='10.75' fill='%23FFF'/%3E%3Ccircle cx='16.2' cy='18.2' r='2.4' fill='%23FF5E62'/%3E%3Ccircle cx='27.8' cy='18.2' r='2.4' fill='%23FF5E62'/%3E%3Cpath d='M19.2 20.6Q22 23.2 24.8 20.6' stroke='%23FF5E62' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Crect x='16' y='34' width='2.6' height='3.5' rx='1' fill='%23FFF'/%3E%3Crect x='20.7' y='32' width='2.6' height='5.5' rx='1' fill='%23FFF'/%3E%3Crect x='25.4' y='30' width='2.6' height='7.5' rx='1' fill='%23FFF'/%3E%3C/svg%3E">
+  <!-- Google Fonts: Be Vietnam Pro & Inter (Dedicated Native Vietnamese Diacritics) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="app-layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="logo-mark" title="Trợ lý AI Xử lý & Phân tích Dữ liệu Doanh nghiệp PHAMHAANHNGOC">
+            <svg class="ai-mascot-svg" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Tín hiệu Anten AI & Ngôi sao lấp lánh -->
+              <line x1="22" y1="4.8" x2="22" y2="9.8" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="22" cy="4" r="2.4" fill="#FFF5E4"/>
+              <path d="M35.5 4.2L36.3 6.4L38.5 7.2L36.3 8L35.5 10.2L34.7 8L32.5 7.2L34.7 6.4L35.5 4.2Z" fill="#FFF8EB"/>
+              <!-- Tai nghe thông minh 2 bên -->
+              <rect x="4" y="15.5" width="3.5" height="8.5" rx="1.75" fill="#FFE0D2"/>
+              <rect x="36.5" y="15.5" width="3.5" height="8.5" rx="1.75" fill="#FFE0D2"/>
+              <!-- Khuôn mặt Robot AI bầu bĩnh đáng yêu -->
+              <rect x="7" y="9.5" width="30" height="21.5" rx="10.75" fill="#FFFFFF"/>
+              <rect x="9.8" y="12" width="24.4" height="14.5" rx="7.25" fill="#FFF4EE" stroke="#FFD5C6" stroke-width="1.1"/>
+              <!-- Đôi mắt tròn long lanh -->
+              <circle cx="16.2" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="17" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <circle cx="27.8" cy="18.2" r="2.4" fill="#FF5E62"/>
+              <circle cx="28.6" cy="17.4" r="0.85" fill="#FFFFFF"/>
+              <!-- Má hồng cam đào -->
+              <ellipse cx="12.8" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <ellipse cx="31.2" cy="20.6" rx="2" ry="1.15" fill="#FF9478" opacity="0.65"/>
+              <!-- Nụ cười thân thiện -->
+              <path d="M19.2 20.6Q22 23.2 24.8 20.6" stroke="#FF5E62" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- Biểu tượng Cột Dữ Liệu Tăng Trưởng (Data Intelligence Badge) -->
+              <rect x="12" y="29" width="20" height="10.5" rx="5.25" fill="#FFF0E8" stroke="#FFC2B0" stroke-width="1.2"/>
+              <rect x="16.2" y="34.5" width="2.5" height="3.2" rx="1" fill="#FFA07A"/>
+              <rect x="20.7" y="32.6" width="2.5" height="5.1" rx="1" fill="#FF7A59"/>
+              <rect x="25.2" y="30.8" width="2.5" height="6.9" rx="1" fill="#FF5E62"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">PHAMHAANHNGOC</span>
+            <span class="brand-tagline">AI Data Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRAGGABLE SIDEBAR RESIZER & SPLITTER RAIL -->
+      <div class="sidebar-resizer" id="sidebarResizer" title="Kéo trượt để chỉnh độ rộng hoặc nhấp để thu gọn / mở rộng menu">
+        <div class="resizer-pill-handle" id="resizerPillHandle" title="Kéo trượt hoặc nhấp để thu gọn / mở rộng">
+          <span class="grip-dots">⋮⋮</span>
+        </div>
+        <div class="resizer-cursor-indicator" id="resizerCursorIndicator">
+          <span class="cursor-arrows">◂||▸</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-title">QUY TRÌNH VẬN HÀNH</div>
+        <button class="nav-item active" data-step="1" id="navStep1">
+          <span class="step-num">1</span>
+          <span class="nav-label">Giới thiệu & Hướng dẫn</span>
+        </button>
+        <button class="nav-item" data-step="2" id="navStep2">
+          <span class="step-num">2</span>
+          <span class="nav-label">Nhập bối cảnh & Dữ liệu</span>
+        </button>
+        <button class="nav-item" data-step="3" id="navStep3">
+          <span class="step-num">3</span>
+          <span class="nav-label">Làm sạch & Kiểm duyệt</span>
+        </button>
+        <button class="nav-item" data-step="4" id="navStep4">
+          <span class="step-num">4</span>
+          <span class="nav-label">Dashboard & Chiến lược</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom-card">
+        <div class="status-top-row">
+          <div class="mini-status-dot online"></div>
+          <div class="status-title">Gemini AI Sẵn Sàng</div>
+        </div>
+        <div class="status-desc" id="sidebarStatusText">Chưa nạp dữ liệu</div>
+        <button class="btn-sidebar-reset" id="btnSidebarReset">
+          <span>🔄 Làm mới phiên</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="main-content">
+      <!-- TOP NAVIGATION BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle-btn" id="mobileMenuBtn">☰</button>
+          <div class="page-title-box">
+            <h1 class="page-title" id="pageTitleHeading">Giới thiệu nền tảng PHAMHAANHNGOC</h1>
+            <p class="page-subtitle" id="pageSubtitleDesc">Hướng dẫn thao tác và tổng quan quy trình chuyển đổi số dữ
+              liệu</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- RESET BUTTON -->
+          <button class="btn btn-reset-topbar" id="btnResetSession"
+            title="Làm mới toàn bộ phiên làm việc để nạp bộ dữ liệu mới">
+            <span class="reset-icon">🔄</span>
+            <span>Làm mới phiên</span>
+          </button>
+
+          <div class="quick-widget">
+            <span class="widget-label">Độ tương phản</span>
+            <label class="clay-switch">
+              <input type="checkbox" id="themeToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="system-badge" style="background: rgba(16, 185, 129, 0.12); color: #059669; font-weight: 600;">
+            <span class="badge-dot" style="background: #10B981;"></span> Gemini 3.5 Flash Active
+          </div>
+
+          <div class="system-badge" id="hostSystemBadge">
+            <span class="badge-dot"></span> <span id="hostSystemText">Localhost:8000</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- STEP CONTAINER -->
+      <div class="content-scrollable">
+
+        <!-- ============================================== -->
+        <!-- MỤC 1: GIỚI THIỆU DOANH NGHIỆP & HƯỚNG DẪN SỬ DỤNG -->
+        <!-- ============================================== -->
+        <section class="workflow-step active" id="step1View">
+          <div class="hero-card">
+            <div class="hero-content">
+              <div class="badge-pill">NỀN TẢNG THÔNG MINH DOANH NGHIỆP</div>
+              <h2 class="hero-title">Chuẩn hóa dữ liệu thô, biến số liệu thành quyết định chiến lược cùng PHAMHAANHNGOC</h2>
+              <p class="hero-desc">
+                PHAMHAANHNGOC là giải pháp thông minh tự động hóa toàn diện quy trình kiểm thử, làm sạch, phân tích và đề xuất
+                chiến lược kinh doanh cho doanh nghiệp. Giúp đội ngũ quản lý phát hiện điểm nghẽn, tối ưu hóa chi phí và
+                gia tăng biên lợi nhuận một cách bài bản, chuẩn xác.
+              </p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" id="btnStartWorkflow">
+                  <span>Bắt đầu ngay</span>
+                  <span class="btn-arrow">→</span>
+                </button>
+                <button class="btn btn-secondary" id="btnTrySampleQuick">
+                  <span>Trải nghiệm mẫu F&B (Ảnh đính kèm)</span>
+                </button>
+              </div>
+            </div>
+            <div class="hero-visual">
+              <div class="glass-stat-card">
+                <div class="stat-top">
+                  <span class="stat-tag">Hiệu suất xử lý</span>
+                  <span class="stat-growth">+99.8%</span>
+                </div>
+                <div class="stat-big-val">100% Sạch</div>
+                <div class="stat-sub">Tự động phát hiện lỗi, trùng lặp và ngoại lai</div>
+                <div class="soft-progress-bar">
+                  <div class="progress-fill" style="width: 95%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- USER GUIDE SECTION -->
+          <div class="section-title-wrap">
+            <h3 class="section-heading">Hướng dẫn sử dụng 4 bước đơn giản</h3>
+            <p class="section-sub">Dành cho mọi nhân sự quản lý, không cần kiến thức lập trình phức tạp</p>
+          </div>
+
+          <div class="guide-grid">
+            <div class="guide-card">
+              <div class="guide-step-badge">Bước 1</div>
+              <h4 class="guide-card-title">Cung cấp bối cảnh</h4>
+              <p class="guide-card-desc">
+                Lựa chọn loại hình kinh doanh và nêu ngắn gọn vấn đề nhức nhối doanh nghiệp đang muốn giải quyết (ví dụ:
+                tỷ lệ hủy đơn, chi phí hao hụt, khách hàng rời bỏ).
+              </p>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-step-badge">Bước 2</div>
+              <h4 class="guide-card-title">Tải lên bộ dữ liệu</h4>
+              <p class="guide-card-desc">
+                Kéo thả file định dạng CSV hoặc Excel (.xlsx). Nếu chưa có dữ liệu sẵn, bạn có thể chọn ngay bộ dữ liệu
+                mẫu thực tế của PHAMHAANHNGOC để thử nghiệm.
+              </p>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-step-badge">Bước 3</div>
+              <h4 class="guide-card-title">Xem trước & Kiểm duyệt</h4>
+              <p class="guide-card-desc">
+                Hệ thống tự động lọc bản ghi trùng, chuẩn hóa trường dữ liệu và sửa lỗi. Bảng đối chiếu màu sắc trực
+                quan thể hiện rõ giá trị trước và sau khi làm sạch.
+              </p>
+            </div>
+
+            <div class="guide-card">
+              <div class="guide-step-badge">Bước 4</div>
+              <h4 class="guide-card-title">Dashboard & Chiến lược</h4>
+              <p class="guide-card-desc">
+                Nhận ngay dashboard trực quan kèm bộ lọc đa chiều (Khu vực, Sản phẩm, Kênh bán), phân tích tổng quan,
+                các đề xuất giải pháp và xuất báo cáo Word (.docx).
+              </p>
+            </div>
+          </div>
+
+          <!-- INDUSTRY SELECTION -->
+          <div class="feature-strip-card">
+            <div class="strip-header">
+              <h4 class="strip-title">Khả năng thích ứng theo ngành nghề</h4>
+              <p class="strip-desc">Chọn nhanh định dạng ngành nghề bạn quan tâm để xem quy chuẩn dữ liệu phù hợp:</p>
+            </div>
+            <div class="industry-pills-row">
+              <button class="pill-chip active" data-ind="fnb">Chuỗi Nhà Hàng & F&B</button>
+              <button class="pill-chip" data-ind="retail">Bán lẻ & E-Commerce</button>
+              <button class="pill-chip" data-ind="saas">Công nghệ & B2B SaaS</button>
+              <button class="pill-chip" data-ind="logistics">Sản xuất & Chuỗi cung ứng</button>
+            </div>
+          </div>
+
+          <!-- DRAG RESIZE PROMPT BANNER -->
+          <div class="resizer-hint-banner" id="resizerHintBanner" title="Nhấp hoặc kéo thanh phân cách bên trái để điều chỉnh">
+            <span class="hint-icon">◂||▸</span>
+            <span class="hint-text">Kéo trượt để chỉnh độ rộng hoặc nhấp để thu gọn / mở rộng menu</span>
+          </div>
+
+          <!-- CUSTOMER FEEDBACK & TESTIMONIALS SECTION -->
+          <div class="feedback-section-wrap" id="feedbackSection">
+            <div class="feedback-section-top">
+              <div class="feedback-header-box">
+                <div class="trust-badge-pill">UY TÍN DOANH NGHIỆP</div>
+                <h3 class="feedback-main-title">Khách Hàng Đánh Giá Gì Về PHAMHAANHNGOC?</h3>
+                <p class="feedback-main-sub">Hơn 500+ doanh nghiệp trên toàn quốc đã tin tưởng sử dụng nền tảng PHAMHAANHNGOC để chuẩn hóa dữ liệu, tối ưu chi phí và tăng trưởng doanh thu</p>
+              </div>
+              <div class="feedback-header-cta">
+                <button class="btn btn-primary btn-submit-review-trigger" id="btnOpenFeedbackModal" title="Gửi đánh giá và cảm nhận thực tế của bạn về PHAMHAANHNGOC">
+                  <span class="btn-icon">⭐</span>
+                  <span>Gửi đánh giá của bạn</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- TRUST STATS COUNTER BAR (4 BOXES EXACTLY AS SCREENSHOT) -->
+            <div class="trust-stats-grid">
+              <div class="trust-stat-box">
+                <div class="trust-stat-val">500+</div>
+                <div class="trust-stat-name">Doanh nghiệp tin dùng</div>
+              </div>
+              <div class="trust-stat-box">
+                <div class="trust-stat-val">99.8%</div>
+                <div class="trust-stat-name">Độ chính xác chuẩn hóa</div>
+              </div>
+              <div class="trust-stat-box">
+                <div class="trust-stat-val">85%</div>
+                <div class="trust-stat-name">Tiết kiệm thời gian xử lý</div>
+              </div>
+              <div class="trust-stat-box">
+                <div class="trust-stat-val highlight-star">4.9 / 5 <span class="coral-star">★</span></div>
+                <div class="trust-stat-name">Đánh giá hài lòng</div>
+              </div>
+            </div>
+
+            <!-- TESTIMONIALS CARDS GRID -->
+            <div class="testimonials-grid" id="testimonialsContainer">
+              <div class="testimonial-card">
+                <div>
+                  <div class="t-stars">★★★★★</div>
+                  <div class="t-comment">"Trước đây việc đối chiếu dữ liệu thất thoát chi phí giữa các cơ sở mất cả tuần. Với PHAMHAANHNGOC, hệ thống tự động phát hiện 15% hóa đơn trùng lặp và xuất Dashboard ngay lập tức. Đội ngũ lãnh đạo cực kỳ ấn tượng!"</div>
+                </div>
+                <div class="t-card-bottom">
+                  <div class="t-avatar" style="background-color: #EF4444;">Đ</div>
+                  <div class="t-info">
+                    <div class="t-name">Anh Trần Minh Đức</div>
+                    <div class="t-role-company">Giám đốc Vận hành - Chuỗi F&B Gourmet Delight</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <div>
+                  <div class="t-stars">★★★★★</div>
+                  <div class="t-comment">"Khả năng làm sạch tự động, chuẩn hóa dữ liệu và đối chiếu mâu thuẫn nhiều nguồn của PHAMHAANHNGOC vượt trội hơn hẳn các công cụ thông thường. Đây là giải pháp không thể thiếu cho đội ngũ phân tích kinh doanh."</div>
+                </div>
+                <div class="t-card-bottom">
+                  <div class="t-avatar" style="background-color: #3B82F6;">L</div>
+                  <div class="t-info">
+                    <div class="t-name">Chị Lê Hoàng Mai Lan</div>
+                    <div class="t-role-company">Trưởng phòng BI & Data Analytics - Tập đoàn NovaRetail</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <div>
+                  <div class="t-stars">★★★★★</div>
+                  <div class="t-comment">"Báo cáo Word quản trị xuất ra từ PHAMHAANHNGOC đầy đủ phân tích Ma trận Ưu - Nhược điểm (Pros & Cons), chỉ số ROI và lộ trình hành động 90 ngày. Chúng tôi dùng trực tiếp để báo cáo Hội đồng Quản trị mà không cần chỉnh sửa gì thêm."</div>
+                </div>
+                <div class="t-card-bottom">
+                  <div class="t-avatar" style="background-color: #10B981;">H</div>
+                  <div class="t-info">
+                    <div class="t-name">Anh Nguyễn Quốc Huy</div>
+                    <div class="t-role-company">Giám đốc Tài chính (CFO) - TechVanguard Solutions</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <div>
+                  <div class="t-stars">★★★★★</div>
+                  <div class="t-comment">"Cơ chế kiểm duyệt HITL giúp chúng tôi chủ động kiểm soát các ranh giới ngoại lệ. Nền tảng chuyên nghiệp, bảo mật dữ liệu tuyệt đối và trải nghiệm người dùng cực kỳ mượt mà."</div>
+                </div>
+                <div class="t-card-bottom">
+                  <div class="t-avatar" style="background-color: #F97316;">H</div>
+                  <div class="t-info">
+                    <div class="t-name">Chị Phạm Thu Hà</div>
+                    <div class="t-role-company">Phó Giám đốc Vận hành - LogiTrans Express</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- MỤC 2: NHẬP BỐI CẢNH & TẢI BỘ DỮ LIỆU -->
+        <!-- ============================================== -->
+        <section class="workflow-step" id="step2View">
+          <div class="form-container-card">
+            <div class="form-header">
+              <h3 class="form-heading">Thông tin bối cảnh & Dữ liệu đầu vào</h3>
+              <p class="form-sub">Nhập thông tin doanh nghiệp giúp Agent tối ưu hóa mô hình phân tích và ra quyết định
+                chính xác nhất</p>
+            </div>
+
+            <div class="form-body">
+              <div class="form-grid-2col">
+                <div class="form-group">
+                  <label class="form-label" for="inputBusinessType">
+                    Loại hình doanh nghiệp <span class="req">*</span>
+                  </label>
+                  <select class="form-select" id="inputBusinessType">
+                    <option value="Chuỗi F&B, Nhà hàng & Dịch vụ Ẩm thực">Chuỗi F&B, Nhà hàng & Dịch vụ Ẩm thực</option>
+                    <option value="Bán lẻ đa kênh & Thương mại điện tử (Omnichannel Retail)">Bán lẻ đa kênh & Thương mại
+                      điện tử</option>
+                    <option value="Công nghệ & Phần mềm Dịch vụ (B2B SaaS)">Công nghệ & Phần mềm Dịch vụ (B2B SaaS)
+                    </option>
+                    <option value="Sản xuất & Chuỗi cung ứng (Manufacturing)">Sản xuất & Chuỗi cung ứng</option>
+                    <option value="Dịch vụ Tài chính & Bảo hiểm (Fintech)">Dịch vụ Tài chính & Bảo hiểm</option>
+                    <option value="Doanh nghiệp khác">Khác (Tự định nghĩa)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputExtraInfo">
+                    Thông tin bổ sung <span class="opt">(Không bắt buộc)</span>
+                  </label>
+                  <input type="text" class="form-input" id="inputExtraInfo"
+                    placeholder="Ví dụ: Quy mô 7 chi nhánh tại Hà Nội, TP.HCM, Đà Nẵng...">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="problem-label-row">
+                  <label class="form-label" for="inputProblem">
+                    Vấn đề cần phân tích trọng tâm <span class="req">*</span>
+                  </label>
+                  <div class="problem-helper-actions">
+                    <label class="combine-mode-toggle" title="Cho phép bấm chọn nhiều gợi ý cùng lúc để gộp câu hỏi">
+                      <input type="checkbox" id="chkCombineSuggestions" checked>
+                      <span>Gộp nhiều câu hỏi gợi ý</span>
+                    </label>
+                    <button type="button" class="btn-clear-problem" id="btnClearProblem" title="Xóa nội dung ô vấn đề">✕ Xóa nhanh</button>
+                  </div>
+                </div>
+                <textarea class="form-textarea" id="inputProblem" rows="3"
+                  placeholder="Chọn nhanh các câu hỏi gợi ý bên dưới hoặc tự nhập bài toán cần phân tích (Ví dụ: Doanh thu sản phẩm nào cao nhất? Tháng nào đứng đầu về doanh thu? Chi nhánh nào cần tối ưu chi phí?...)"></textarea>
+
+                <div class="problem-suggestions-box">
+                  <div class="suggestions-header">
+                    <span class="tags-hint">💡 Gợi ý câu hỏi &amp; bài toán trọng tâm (Bấm để chọn nhanh):</span>
+                  </div>
+                  <div class="quick-tags-wrap" id="problemQuickTags">
+                    <button type="button" class="tag-pill"
+                      data-text="Doanh thu sản phẩm nào cao nhất? Sản phẩm chủ lực đó đóng góp bao nhiêu % vào tổng doanh thu?">🏆 Doanh thu sản phẩm nào cao nhất?</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Tháng nào đứng đầu về doanh thu và xu hướng biến động doanh thu theo thời gian ra sao?">📅 Tháng nào đứng đầu về doanh thu?</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Chi nhánh hoặc khu vực nào đang đứng đầu về doanh thu và số lượng đơn hàng?">🏢 Chi nhánh / Khu vực nào dẫn đầu?</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Sản phẩm hoặc đơn vị nào có doanh thu thấp nhất, nguyên nhân gốc rễ do đâu và giải pháp cải thiện?">📉 Sản phẩm / Đơn vị nào thấp nhất?</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Cơ cấu tỷ trọng đóng góp doanh thu (cả giá trị số và %) giữa các nhóm sản phẩm / ngành hàng như thế nào?">🥧 Tỷ trọng đóng góp theo ngành hàng?</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Giá trị trung bình trên mỗi đơn hàng (AOV) đạt bao nhiêu và làm sao để gia tăng quy mô giỏ hàng?">💰 Giá trị đơn hàng trung bình (AOV)?</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Chi phí nguyên vật liệu và tỷ lệ hao hụt vượt định mức an toàn 12% tại các cơ sở nào?">💸 Hao hụt &amp; Chi phí vượt định mức F&amp;B</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Tỷ lệ hủy đơn hàng cao và chi phí hoàn đơn kênh online tăng trong 2 quý gần nhất ở kênh nào?">📦 Tỷ lệ hủy đơn &amp; Hoàn trả kênh Online</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Tỷ lệ khách hàng rời bỏ dịch vụ (Churn rate) gia tăng và chi phí chăm sóc sau bán chưa tối ưu?">👥 Khách hàng rời bỏ (Churn rate)</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Hiệu suất chuyển đổi và biên lợi nhuận theo từng kênh phân phối đang chênh lệch như thế nào?">⚡ Hiệu quả giữa các kênh phân phối</button>
+                    <button type="button" class="tag-pill"
+                      data-text="Đề xuất phương án tái phân bổ nguồn lực và lộ trình hành động 30-60-90 ngày để tối đa hóa ROI?">🎯 Lộ trình tối ưu nguồn lực 30-60-90 ngày</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- FILE UPLOAD ZONE -->
+              <div class="form-group upload-section">
+                <label class="form-label">
+                  Tải lên bộ dữ liệu doanh nghiệp <span class="req">*</span>
+                  <span class="label-badge">Hỗ trợ .csv, .xlsx, .xls, .json</span>
+                </label>
+
+                <div class="upload-dropzone" id="dropzone">
+                  <input type="file" id="fileInput" accept=".csv, .xlsx, .xls, .json" class="file-hidden-input">
+                  <div class="dropzone-inner">
+                    <div class="dropzone-icon-box">📁</div>
+                    <div class="dropzone-texts">
+                      <span class="drop-main">Kéo thả file dữ liệu vào đây hoặc <span class="highlight-link">chọn từ
+                          thiết bị</span></span>
+                      <span class="drop-sub">Dung lượng khuyến nghị dưới 50MB. Hệ thống cam kết bảo mật nội bộ an toàn
+                        100%.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Selected File Display -->
+                <div class="selected-file-card" id="selectedFileCard" style="display: none;">
+                  <div class="file-info-col">
+                    <div class="file-name" id="fileNameDisplay">dataset.csv</div>
+                    <div class="file-size" id="fileSizeDisplay">245 KB</div>
+                  </div>
+                  <button type="button" class="btn-remove-file" id="btnRemoveFile" title="Hủy chọn file">✕</button>
+                </div>
+
+                <!-- SAMPLE DATASET BAR -->
+                <div class="sample-dataset-strip">
+                  <div class="sample-title">Hoặc trải nghiệm ngay bộ dữ liệu mẫu đã thiết lập sẵn:</div>
+                  <div class="sample-btn-group">
+                    <button type="button" class="btn-sample highlight-sample" data-sample="fnb">
+                      <span>✨ Mẫu Chuỗi F&B (Chuẩn ảnh mẫu gửi)</span>
+                    </button>
+                    <button type="button" class="btn-sample" data-sample="retail">
+                      <span>Mẫu Bán Lẻ (158 dòng)</span>
+                    </button>
+                    <button type="button" class="btn-sample" data-sample="saas">
+                      <span>Mẫu SaaS (141 dòng)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTON -->
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary btn-large" id="btnSubmitData">
+                  <span>Tiến hành làm sạch & chuẩn hóa dữ liệu</span>
+                  <span class="btn-arrow">→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- MỤC 3: LÀM SẠCH & KIỂM DUYỆT (PREVIEW & APPROVE) -->
+        <!-- ============================================== -->
+        <section class="workflow-step" id="step3View">
+
+          <!-- TOP APPROVAL BAR (EXACT AS USER SCREENSHOT) -->
+          <div class="approval-top-header">
+            <div class="approval-meta">
+              <span class="badge-status-pill" id="badgeApprovalStatus">CHỜ DUYỆT (LẦN #1)</span>
+              <h2 class="approval-header-title">Kiểm duyệt Bản Dữ liệu Đã Làm sạch</h2>
+              <p class="approval-header-sub">Các ô được tô màu là những điểm Agent đã chuẩn hóa. Bạn có đồng ý với bản
+                xử lý này không?</p>
+            </div>
+            <div class="approval-header-actions">
+              <button class="btn btn-approve-green" id="btnApproveData">
+                <span>Đồng ý & Xem Báo cáo Phân tích (Bước 4) →</span>
+              </button>
+              <button class="btn btn-disapprove-pink" id="btnRequestRevision">
+                <span>Chưa đồng ý (Liệt kê lỗi cần sửa lại)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. CẤU HÌNH QUY TRÌNH LÀM SẠCH (CLEANING CONFIGURATION) -->
+          <div class="config-panel-card">
+            <div class="config-panel-header" id="configToggleHeader">
+              <div class="config-header-text">
+                <h4 class="config-title">⚙️ Cấu hình Quy trình Làm sạch</h4>
+                <span class="config-sub">Tùy biến các quy tắc và giải thuật chuẩn hóa dữ liệu của Agent</span>
+              </div>
+              <button class="btn-fold" id="btnFoldConfig">▼</button>
+            </div>
+            <div class="config-panel-body" id="configPanelBody">
+              <div class="config-grid">
+                <label class="config-item">
+                  <input type="checkbox" id="cfgRemoveDupes" checked>
+                  <span class="config-label-text">Loại bỏ bản ghi trùng lặp (Deduplication)</span>
+                </label>
+                <label class="config-item">
+                  <input type="checkbox" id="cfgStandardizeText" checked>
+                  <span class="config-label-text">Chuẩn hóa văn bản & khoảng trắng thừa</span>
+                </label>
+                <label class="config-item">
+                  <input type="checkbox" id="cfgStandardizeDates" checked>
+                  <span class="config-label-text">Quy đổi ngày tháng sang chuẩn ISO (YYYY-MM-DD)</span>
+                </label>
+                <label class="config-item">
+                  <input type="checkbox" id="cfgConvertNumbers" checked>
+                  <span class="config-label-text">Bóc tách đơn vị tiền tệ & ký tự số</span>
+                </label>
+                <label class="config-item">
+                  <input type="checkbox" id="cfgFixNegatives" checked>
+                  <span class="config-label-text">Sửa lỗi số âm bất thường sang số dương</span>
+                </label>
+                <div class="config-item select-item">
+                  <span class="config-label-text">Xử lý ô khuyết thiếu:</span>
+                  <select class="form-select-sm" id="cfgMissingStrategy">
+                    <option value="median">Điền Trung vị (Median)</option>
+                    <option value="mean">Điền Trung bình (Mean)</option>
+                    <option value="placeholder">Điền 'Chưa xác định'</option>
+                  </select>
+                </div>
+              </div>
+              <div class="config-action-row">
+                <button class="btn btn-outline btn-sm" id="btnApplyConfig">
+                  <span>Áp dụng cấu hình & Tái xử lý</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. KẾT QUẢ XỬ LÝ & NHẬT KÝ (ĐỐI CHIẾU CHẤT LƯỢNG TRƯỚC VÀ SAU) -->
+          <div class="quality-compare-card">
+            <div class="compare-header">
+              <h4 class="compare-title">📊 Kết quả Xử lý & Đối chiếu Chất lượng (Trước vs Sau khi làm sạch)</h4>
+              <p class="compare-sub">Bảng đối chiếu định lượng các chỉ số toàn vẹn dữ liệu được cải thiện bởi Agent</p>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-box">
+                <div class="comp-label">Số dòng dữ liệu</div>
+                <div class="comp-values">
+                  <span class="comp-before" id="compRowBefore">168</span>
+                  <span class="comp-arrow">➔</span>
+                  <span class="comp-after" id="compRowAfter">160</span>
+                </div>
+                <div class="comp-diff" id="compRowDiff">-8 dòng trùng lặp</div>
+              </div>
+
+              <div class="compare-box">
+                <div class="comp-label">Ô khuyết thiếu (Missing)</div>
+                <div class="comp-values">
+                  <span class="comp-before comp-alert" id="compMissBefore">40 ô</span>
+                  <span class="comp-arrow">➔</span>
+                  <span class="comp-after comp-good" id="compMissAfter">0 ô</span>
+                </div>
+                <div class="comp-diff comp-good-text" id="compMissDiff">100% Đã bù đắp</div>
+              </div>
+
+              <div class="compare-box">
+                <div class="comp-label">Lỗi định dạng & Số học</div>
+                <div class="comp-values">
+                  <span class="comp-before comp-alert" id="compFormatBefore">21 lỗi</span>
+                  <span class="comp-arrow">➔</span>
+                  <span class="comp-after comp-good" id="compFormatAfter">0 lỗi</span>
+                </div>
+                <div class="comp-diff comp-good-text" id="compFormatDiff">Chuẩn hóa hoàn tất</div>
+              </div>
+
+              <div class="compare-box">
+                <div class="comp-label">Điểm toàn vẹn (Health Score)</div>
+                <div class="comp-values">
+                  <span class="comp-before" id="compScoreBefore">72.5</span>
+                  <span class="comp-arrow">➔</span>
+                  <span class="comp-after comp-highlight" id="compScoreAfter">99.2/100</span>
+                </div>
+                <div class="comp-diff comp-highlight-text" id="compScoreDiff">+26.7% Cải thiện</div>
+              </div>
+            </div>
+
+            <!-- COLLAPSIBLE LOGS -->
+            <div class="collapsible-log-section">
+              <div class="log-toggle-bar" id="auditLogToggle">
+                <span class="log-toggle-title">Xem nhật ký kỹ thuật chi tiết của Agent (Audit Trail)</span>
+                <span class="log-fold-icon" id="btnFoldAudit">▼</span>
+              </div>
+              <div class="collapsible-log-body" id="auditLogContainer">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. BẢNG XEM TRƯỚC DỮ LIỆU ĐÃ LÀM SẠCH (EXACT SCREENSHOT LAYOUT) -->
+          <div class="preview-table-card">
+            <div class="table-legend-bar">
+              <div class="legend-left">
+                <h4 class="preview-heading">Bảng Xem trước Dữ liệu Đã Làm sạch</h4>
+                <div class="legend-items">
+                  <span class="legend-pill pill-format"><span class="dot-blue"></span> Chuẩn hóa định dạng</span>
+                  <span class="legend-pill pill-numeric"><span class="dot-orange"></span> Sửa lỗi số / ngoại lai</span>
+                  <span class="legend-pill pill-missing"><span class="dot-green"></span> Điền giá trị thiếu</span>
+                  <span class="legend-pill pill-custom"><span class="dot-purple"></span> Sửa theo phản hồi KH</span>
+                </div>
+              </div>
+
+              <div class="legend-right">
+                <label class="control-checkbox">
+                  <input type="checkbox" id="chkShowOriginal" checked>
+                  <span>Hiện giá trị gốc</span>
+                </label>
+                <label class="control-checkbox">
+                  <input type="checkbox" id="chkOnlyModified">
+                  <span>Chỉ dòng có sửa đổi</span>
+                </label>
+                <div class="quick-export-group">
+                  <button class="btn btn-xs" id="btnExportCsvQuick" title="Tải file CSV">Tải CSV</button>
+                  <button class="btn btn-xs" id="btnExportExcelQuick" title="Tải file Excel">Tải Excel</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- TABLE SEARCH & STATS BAR -->
+            <div class="table-sub-controls">
+              <input type="text" class="table-search-input" id="tableSearchInput"
+                placeholder="Tìm kiếm nhanh trong bảng...">
+              <span class="table-row-count" id="tableRowCount">Hiển thị 30 dòng</span>
+            </div>
+
+            <!-- TABLE WRAPPER WITH RESIZE SCROLL -->
+            <div class="table-responsive" id="tableResponsive">
+              <table class="diff-table" id="previewTable">
+                <thead id="previewTableHead">
+                  <!-- Dynamically generated -->
+                </thead>
+                <tbody id="previewTableBody">
+                  <!-- Dynamically generated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- EXPANDABLE FEEDBACK / ERROR CORRECTION DRAWER -->
+            <div class="revision-drawer" id="revisionDrawer" style="display: none;">
+              <div class="drawer-header">
+                <h4 class="drawer-title">Liệt kê sai sót hoặc yêu cầu Agent chỉnh sửa lại</h4>
+                <button class="btn-close-drawer" id="btnCloseRevision">✕</button>
+              </div>
+              <p class="drawer-desc">
+                Nhập nội dung bạn muốn Agent sửa (Ví dụ: "Loại bỏ các dòng có doanh thu âm", "Chuẩn hóa lại ngày tháng",
+                "Xóa cột xyz", "Loại bỏ giá trị 0"):
+              </p>
+              <textarea class="form-textarea" id="revisionInstructions" rows="3"
+                placeholder="Nhập chi tiết yêu cầu chỉnh sửa tại đây..."></textarea>
+
+              <div class="quick-tags-wrap" style="margin-top: 10px;">
+                <span class="tags-hint">Thêm nhanh yêu cầu:</span>
+                <button type="button" class="tag-pill rev-tag" data-text="Loại bỏ toàn bộ các dòng có giá trị âm">Bỏ
+                  dòng giá trị âm</button>
+                <button type="button" class="tag-pill rev-tag" data-text="Loại bỏ các dòng có giá trị bằng 0">Bỏ dòng có
+                  số 0</button>
+                <button type="button" class="tag-pill rev-tag"
+                  data-text="Lọc bỏ các giá trị ngoại lai bất thường (outliers)">Lọc ngoại lai (Outliers)</button>
+                <button type="button" class="tag-pill rev-tag"
+                  data-text="Chuẩn hóa lại định dạng văn bản loại bỏ dấu cách">Chuẩn hóa khoảng trắng</button>
+              </div>
+
+              <div class="drawer-actions">
+                <button class="btn btn-secondary" id="btnCancelRevision">Hủy</button>
+                <button class="btn btn-primary" id="btnSubmitRevision">
+                  <span>Áp dụng tinh chỉnh ngay</span>
+                  <span class="btn-arrow">✓</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ============================================== -->
+        <!-- MỤC 4: DASHBOARD TRỰC QUAN & CHIẾN LƯỢC KINH DOANH (GỘP CHUNG) -->
+        <!-- ============================================== -->
+        <section class="workflow-step" id="step4View">
+          <!-- TOP ACTION BANNER -->
+          <div class="dashboard-action-banner">
+            <div class="banner-texts">
+              <span class="banner-tag">KẾT QUẢ PHÂN TÍCH TỔNG HỢP</span>
+              <h3 class="banner-title" id="dashBusinessTitle">Báo Cáo Toàn Diện Dành Cho Doanh Nghiệp</h3>
+              <p class="banner-sub" id="dashProblemSubtitle">Giải quyết vấn đề: Tối ưu hóa vận hành & gia tăng hiệu quả
+              </p>
+            </div>
+            <div class="banner-buttons">
+              <button class="btn btn-download-data" id="btnExportDataCsv" title="Tải dữ liệu đã làm sạch">
+                <span>Tải dữ liệu sạch (.CSV)</span>
+              </button>
+              <button class="btn btn-docx" id="btnExportDocx" title="Xuất báo cáo Word hoàn chỉnh">
+                <span class="docx-icon">📄</span>
+                <span>Tải Báo Cáo Doanh Nghiệp (.docx)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- COMBINED DUAL-TIER FILTER BAR (LỌC CHUNG CHUNG ➔ LỌC CỤ THỂ) -->
+          <div class="dashboard-filter-card">
+            <!-- TẦNG 1: LỌC CHUNG (CHỈ SỐ & NHÓM THEO ẢNH MẪU) -->
+            <div class="filter-tier-1">
+              <div class="tier-title-box">
+                <span class="tier-badge">TẦNG 1: GÓC NHÌN PHÂN TÍCH</span>
+                <span class="tier-hint">Chọn chỉ số & chiều phân nhóm tổng quan</span>
+              </div>
+              <div class="tier-controls-row">
+                <div class="filter-pill-item">
+                  <span class="pill-label">Chỉ số:</span>
+                  <div class="pill-select-wrap">
+                    <select class="styled-select" id="filterMetricSelect">
+                      <option value="Doanh_Thu">Doanh thu</option>
+                      <option value="Chi_Phí_Nguyên_Liệu">Chi phí nguyên liệu</option>
+                      <option value="Chi_Phí_Vận_Hành">Chi phí vận hành</option>
+                      <option value="Số_Lượng_Khách">Số lượng khách</option>
+                      <option value="Tỷ_Lệ_Hao_Hụt">Tỷ lệ hao hụt (%)</option>
+                      <option value="Điểm_Đánh_Giá">Điểm đánh giá / Hài lòng</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="filter-pill-item">
+                  <span class="pill-label">Nhóm:</span>
+                  <div class="pill-select-wrap">
+                    <select class="styled-select" id="filterGroupSelect">
+                      <option value="Khu_Vực">Khu vực</option>
+                      <option value="Cơ_Sở" selected>Cơ sở</option>
+                      <option value="Nhóm_Món">Nhóm món</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TẦNG 2: LỌC CỤ THỂ (THU HẸP PHẠM VI DỮ LIỆU) -->
+            <div class="filter-tier-2">
+              <div class="tier-title-box">
+                <span class="tier-badge tier-badge-sub">TẦNG 2: THU HẸP PHẠM VI</span>
+                <span class="tier-hint">Lọc chi tiết theo từng thực thể cụ thể</span>
+              </div>
+              <div class="tier-controls-row">
+                <div class="filter-sub-item">
+                  <label for="filterRegion">Khu vực cụ thể:</label>
+                  <select class="filter-select-sm" id="filterRegion">
+                    <option value="all">Tất cả khu vực</option>
+                  </select>
+                </div>
+
+                <div class="filter-sub-item">
+                  <label for="filterCategory">Nhóm món cụ thể:</label>
+                  <select class="filter-select-sm" id="filterCategory">
+                    <option value="all">Tất cả nhóm món</option>
+                  </select>
+                </div>
+
+                <div class="filter-sub-item">
+                  <label for="filterStatus">Tiêu chuẩn lọc:</label>
+                  <select class="filter-select-sm" id="filterStatus">
+                    <option value="all">Tất cả bản ghi</option>
+                  </select>
+                </div>
+
+                <button class="btn btn-filter-reset" id="btnResetFilter" title="Đặt lại bộ lọc về mặc định">
+                  <span>Đặt lại bộ lọc</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI CARDS GRID -->
+          <div class="kpi-grid" id="kpiContainer">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- CHARTS SECTION: HỆ THỐNG 4 BIỂU ĐỒ TRỰC QUAN ĐA CHIỀU (LƯỚI 2x2 CÂN ĐỐI) -->
+          <div class="charts-grid">
+            <!-- 1. BIỂU ĐỒ ĐẦU TIÊN: BIỂU ĐỒ ĐƯỜNG (LINE CHART THUẦN KHIẾT) -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h4 class="chart-title" id="chart1Title">Biểu Đồ Đường: Xu Hướng Theo Thời Gian</h4>
+                  <span class="chart-subtitle" id="chart1Subtitle">Theo dõi biến động và xu hướng tăng trưởng qua các mốc thời gian</span>
+                </div>
+                <div class="chart-tag chart-tag-line" id="chart1Tag">Biểu Đồ Đường</div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="trendChart"></canvas>
+              </div>
+            </div>
+
+            <!-- 2. BIỂU ĐỒ THANH NGANG: BẢNG XẾP HẠNG TOP ĐẦU (RANKING) -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h4 class="chart-title" id="rankingChartTitle">Bảng Xếp Hạng Top Hiệu Suất</h4>
+                  <span class="chart-subtitle">Sản phẩm / đơn vị có thành tiền &amp; quy mô cao nhất</span>
+                </div>
+                <div class="chart-tag chart-tag-rank">Xếp Hạng (Ranking)</div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="rankingChart"></canvas>
+              </div>
+            </div>
+
+            <!-- 3. BIỂU ĐỒ CỘT: PHÂN TÍCH THEO PHÂN NHÓM CỐT LÕI -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h4 class="chart-title" id="chart2Title">Đóng Góp Theo Phân Nhóm Cốt Lõi</h4>
+                  <span class="chart-subtitle">So sánh quy mô định lượng giữa các nhóm / chi nhánh</span>
+                </div>
+                <div class="chart-tag">Phân Nhóm</div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+
+            <!-- 4. BIỂU ĐỒ TỶ TRỌNG ĐÓNG GÓP: VỪA GIÁ TRỊ SỐ, VỪA PHẦN TRĂM -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h4 class="chart-title" id="chart3Title">Cơ Cấu Tỷ Trọng Đóng Góp</h4>
+                  <span class="chart-subtitle">Hiển thị song song cả giá trị số thực tế và tỷ lệ phần trăm (%)</span>
+                </div>
+                <div class="chart-tag chart-tag-contrib">Tỷ Trọng (Số &amp; %)</div>
+              </div>
+              <div class="chart-canvas-wrap doughnut-wrap">
+                <canvas id="distributionChart"></canvas>
+              </div>
+              <!-- Pills hiển thị chi tiết vừa giá trị số vừa % -->
+              <div class="contribution-breakdown-pills" id="distributionPills"></div>
+            </div>
+          </div>
+
+          <!-- TỔNG QUAN PHÂN TÍCH (EXECUTIVE OVERVIEW) -->
+          <div class="overview-box-card">
+            <div class="overview-header">
+              <div class="overview-badge">TỔNG QUAN PHÂN TÍCH</div>
+              <h4 class="overview-title">Nhận xét tổng quan từ Agent phân tích dữ liệu</h4>
+            </div>
+            <div class="overview-bullets" id="overviewBullets">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- ĐỀ XUẤT CHIẾN LƯỢC & RA QUYẾT ĐỊNH (STRATEGY & DECISION MAKING) -->
+          <div class="strategy-composite-card">
+            <div class="strategy-top-header">
+              <div class="badge-pill">ĐỀ XUẤT CHIẾN LƯỢC & RA QUYẾT ĐỊNH THỰC TẾ</div>
+              <h3 class="strategy-heading" id="strategyHeading">Phương Án Tái Cấu Trúc & Tối Ưu Hóa Vận Hành</h3>
+              <p class="strategy-sub" id="strategySub">Kế hoạch hành động cụ thể để giải quyết triệt để bài toán kinh
+                doanh</p>
+            </div>
+
+            <!-- PROPOSED SOLUTION BLOCK -->
+            <div class="solution-block">
+              <div class="solution-tag">PHƯƠNG ÁN ĐỀ XUẤT</div>
+              <h4 class="solution-name" id="solutionName">Giải pháp Tối ưu hóa Nguồn lực & Rà soát Tỷ lệ Rời bỏ</h4>
+              <p class="solution-desc" id="solutionDesc">Đang cập nhật...</p>
+
+              <div class="solution-steps-box">
+                <div class="steps-title">Các bước thực thi cụ thể:</div>
+                <ul class="steps-list" id="solutionStepsList">
+                  <!-- Dynamically populated -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- PROS & CONS GRID -->
+            <div class="pros-cons-grid">
+              <div class="pro-card">
+                <div class="pc-header pro-hdr">
+                  <span class="pc-icon">✓</span>
+                  <span class="pc-title">Ưu điểm & Đòn bẩy tăng trưởng</span>
+                </div>
+                <ul class="pc-list" id="prosList">
+                  <!-- Dynamically populated -->
+                </ul>
+              </div>
+
+              <div class="con-card">
+                <div class="pc-header con-hdr">
+                  <span class="pc-icon">!</span>
+                  <span class="pc-title">Nhược điểm & Thách thức cần khắc phục</span>
+                </div>
+                <ul class="pc-list" id="consList">
+                  <!-- Dynamically populated -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- DECISION RATIONALE (WHY CHOSEN) -->
+            <div class="rationale-card">
+              <div class="rationale-col">
+                <h5 class="rationale-title">Tại sao lại lựa chọn phương án này?</h5>
+                <p class="rationale-text" id="rationaleWhy">Đang tổng hợp...</p>
+              </div>
+              <div class="rationale-col">
+                <h5 class="rationale-title">Kỳ vọng kết quả đạt được</h5>
+                <p class="rationale-text" id="rationaleImpact">Đang tổng hợp...</p>
+              </div>
+            </div>
+
+            <!-- BOTTOM DOCX REMINDER -->
+            <div class="docx-cta-strip">
+              <div class="cta-left">
+                <strong>Bạn cần bản kế hoạch chi tiết để trình bày trước Hội đồng Quản trị?</strong>
+                <p>Bản báo cáo DOCX bao gồm chi tiết tài chính, ma trận rủi ro, kế hoạch ngân sách và lộ trình 90 ngày
+                  đầy đủ.</p>
+              </div>
+              <button class="btn btn-docx" id="btnExportDocxBottom">
+                <span>Tải Báo Cáo Word Hoàn Chỉnh (.docx)</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- CUSTOMER FEEDBACK SUBMISSION MODAL -->
+  <div class="modal-backdrop" id="feedbackModal" style="display: none;">
+    <div class="modal-card feedback-modal-card">
+      <div class="modal-header">
+        <h4 class="modal-title">⭐ Gửi đánh giá cho PHAMHAANHNGOC</h4>
+        <button class="btn-close-drawer" id="btnCloseFeedbackModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Ý kiến đóng góp của bạn giúp chúng tôi không ngừng hoàn thiện thuật toán và nâng tầm giải pháp trí tuệ doanh nghiệp.</p>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Mức độ hài lòng của bạn <span class="req">*</span></label>
+          <div class="star-rating-select" id="starRatingSelect">
+            <div class="stars-row" id="starsRow">
+              <span class="star-item active" data-rating="1" data-star="1" title="1 sao - Rất không hài lòng">★</span>
+              <span class="star-item active" data-rating="2" data-star="2" title="2 sao - Chưa hài lòng">★</span>
+              <span class="star-item active" data-rating="3" data-star="3" title="3 sao - Bình thường">★</span>
+              <span class="star-item active" data-rating="4" data-star="4" title="4 sao - Hài lòng">★</span>
+              <span class="star-item active" data-rating="5" data-star="5" title="5 sao - Rất hài lòng">★</span>
+            </div>
+            <span class="rating-label-text" id="ratingLabelText">5/5 - Rất hài lòng</span>
+          </div>
+        </div>
+
+        <div class="form-grid-2col" style="margin-bottom: 16px;">
+          <div class="form-group">
+            <label class="form-label" for="fbAuthorName">Họ và tên của bạn <span class="req">*</span></label>
+            <input type="text" class="form-input" id="fbAuthorName" placeholder="Ví dụ: Nguyễn Văn An">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fbAuthorRole">Chức vụ / Vị trí</label>
+            <input type="text" class="form-input" id="fbAuthorRole" placeholder="Ví dụ: Giám đốc Vận hành / CFO">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" for="fbAuthorCompany">Tên Doanh nghiệp / Tổ chức</label>
+          <input type="text" class="form-input" id="fbAuthorCompany" placeholder="Ví dụ: Công ty CP Bán Lẻ Nova">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fbCommentText">Nhận xét & Trải nghiệm thực tế <span class="req">*</span></label>
+          <textarea class="form-textarea" id="fbCommentText" rows="3" placeholder="Chia sẻ cảm nhận của bạn về độ chính xác làm sạch, tốc độ xử lý hoặc tính hữu ích của báo cáo chiến lược..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCancelFeedback">Hủy</button>
+        <button class="btn btn-primary" id="btnSubmitFeedback">
+          <span>Gửi Đánh Giá Ngay</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIRTUAL AI ASSISTANT WIDGET (PHAMHAANHNGOC CHATBOT) -->
+  <div class="ai-assistant-widget" id="aiAssistantWidget">
+    <!-- Floating Launcher Button -->
+    <button class="ai-assistant-fab" id="btnOpenAiAssistant" title="Trợ lý ảo AI PHAMHAANHNGOC - Giải đáp 24/7">
+      <div class="fab-icon-glow">
+        <svg class="fab-bot-svg" width="24" height="24" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="22" y1="4.5" x2="22" y2="9.5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="22" cy="3.8" r="2.5" fill="#FFF5E4"/>
+          <rect x="6.5" y="9.5" width="31" height="23" rx="11.5" fill="#FFFFFF"/>
+          <circle cx="16" cy="19.5" r="2.6" fill="#FF5E62"/>
+          <circle cx="16.8" cy="18.7" r="0.9" fill="#FFFFFF"/>
+          <circle cx="28" cy="19.5" r="2.6" fill="#FF5E62"/>
+          <circle cx="28.8" cy="18.7" r="0.9" fill="#FFFFFF"/>
+          <ellipse cx="12.5" cy="22" rx="2.1" ry="1.2" fill="#FF9478" opacity="0.7"/>
+          <ellipse cx="31.5" cy="22" rx="2.1" ry="1.2" fill="#FF9478" opacity="0.7"/>
+          <path d="M19 22.2Q22 25 25 22.2" stroke="#FF5E62" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="fab-content-wrap">
+        <span class="fab-title">Trợ lý AI</span>
+        <span class="fab-badge">Tư vấn 24/7</span>
+      </div>
+      <span class="fab-pulse-dot"></span>
+    </button>
+
+    <!-- Floating Chat Drawer / Window -->
+    <div class="ai-chat-drawer" id="aiChatDrawer" style="display: none;">
+      <div class="ai-chat-header">
+        <div class="ai-header-left">
+          <div class="ai-avatar-wrap">
+            <svg class="chat-bot-avatar-svg" width="26" height="26" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="22" y1="4.5" x2="22" y2="9.5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"/>
+              <circle cx="22" cy="3.8" r="2.5" fill="#FFF5E4"/>
+              <rect x="6.5" y="9.5" width="31" height="23" rx="11.5" fill="#FFFFFF"/>
+              <circle cx="16" cy="19.5" r="2.6" fill="#FF5E62"/>
+              <circle cx="16.8" cy="18.7" r="0.9" fill="#FFFFFF"/>
+              <circle cx="28" cy="19.5" r="2.6" fill="#FF5E62"/>
+              <circle cx="28.8" cy="18.7" r="0.9" fill="#FFFFFF"/>
+              <ellipse cx="12.5" cy="22" rx="2.1" ry="1.2" fill="#FF9478" opacity="0.7"/>
+              <ellipse cx="31.5" cy="22" rx="2.1" ry="1.2" fill="#FF9478" opacity="0.7"/>
+              <path d="M19 22.2Q22 25 25 22.2" stroke="#FF5E62" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            </svg>
+            <span class="ai-live-dot"></span>
+          </div>
+          <div class="ai-header-info">
+            <div class="ai-bot-name">Trợ lý AI PHAMHAANHNGOC</div>
+            <div class="ai-bot-status">Trực tuyến • Gemini 3.5 Flash Powered</div>
+          </div>
+        </div>
+        <div class="ai-header-actions">
+          <button class="icon-btn-ghost" id="btnClearAiChat" title="Xóa lịch sử chat">🔄</button>
+          <button class="icon-btn-ghost" id="btnCloseAiAssistant" title="Thu nhỏ">✕</button>
+        </div>
+      </div>
+
+      <!-- FAQ QUICK PROMPT CHIPS -->
+      <div class="ai-faq-bar">
+        <div class="faq-bar-title">💡 Câu hỏi khách hàng thường quan tâm:</div>
+        <div class="faq-chips-scroll" id="faqChipsContainer">
+          <button class="faq-chip" data-faq="security">🛡️ Bảo mật dữ liệu</button>
+          <button class="faq-chip" data-faq="health_score">📈 Công thức Health Score</button>
+          <button class="faq-chip" data-faq="negative_calc">⚡ Sửa lỗi số âm & lệch số</button>
+          <button class="faq-chip" data-faq="formats">📁 Định dạng file & dung lượng</button>
+          <button class="faq-chip" data-faq="export_reports">📄 Xuất báo cáo Word & Excel</button>
+          <button class="faq-chip" data-faq="custom_rules">🎯 Tùy biến quy tắc ngành</button>
+        </div>
+      </div>
+
+      <!-- CHAT MESSAGE STREAM -->
+      <div class="ai-chat-body" id="aiChatBody">
+        <div class="ai-msg-bubble bot">
+          <div class="msg-content">
+            <p><strong>Xin chào!</strong> Tôi là Trợ lý ảo AI của nền tảng <strong>PHAMHAANHNGOC</strong>.</p>
+            <p>Tôi có thể giúp bạn giải đáp mọi thắc mắc về:</p>
+            <ul>
+              <li>Quy chuẩn làm sạch & khử số âm tự động</li>
+              <li>Công thức tính Chỉ số Toàn vẹn (Data Health)</li>
+              <li>Chính sách bảo mật dữ liệu doanh nghiệp</li>
+              <li>Cách xuất báo cáo Word chiến lược cho Hội đồng Quản trị</li>
+            </ul>
+            <p style="margin-top: 6px;"><em>Hãy chọn các câu hỏi mẫu ở trên hoặc gõ câu hỏi bất kỳ bên dưới nhé!</em></p>
+          </div>
+          <span class="msg-time">Vừa xong</span>
+        </div>
+      </div>
+
+      <!-- CHAT INPUT FOOTER -->
+      <div class="ai-chat-footer">
+        <div class="ai-input-wrap">
+          <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Đặt câu hỏi cho Trợ lý AI PHAMHAANHNGOC..." autocomplete="off">
+          <button class="btn-send-ai" id="btnSendAiChat" title="Gửi câu hỏi">
+            <span>➤</span>
+          </button>
+        </div>
+        <div class="ai-input-hint">Được hỗ trợ bởi Google Gemini AI • Phản hồi chính xác & bảo mật</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET CONFIRMATION MODAL -->
+  <div class="modal-backdrop" id="resetModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h4 class="modal-title">🔄 Xác nhận Làm mới Phiên làm việc?</h4>
+        <button class="btn-close-drawer" id="btnCloseResetModal">✕</button>
+      </div>
+      <p class="modal-body">
+        Toàn bộ dữ liệu của phiên hiện tại (bảng dữ liệu, lịch sử làm sạch, biểu đồ dashboard) sẽ được xóa sạch để hệ
+        thống sẵn sàng tiếp nhận bộ dữ liệu doanh nghiệp mới của bạn.
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCancelReset">Hủy</button>
+        <button class="btn btn-primary" id="btnConfirmReset">
+          <span>Xác nhận Làm mới</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATION -->
+  <div class="toast-notification" id="toastNotification">
+    <span class="toast-message" id="toastMsg">Thao tác thành công</span>
+  </div>
+
+  <!-- SELF-CONTAINED V3 INLINE STYLES & BRIDGE (GUARANTEES 100% VERCEL & LOCALHOST HARMONY) -->
+  <style id="v3-inline-styles">
+    /* 1. Main Layout & Spacious Topbar (Fixes Image 1) */
+    .main-content {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    .content-scrollable {
+      flex: 1 !important;
+      min-width: 0 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding: 28px 32px 60px !important;
+    }
+    .topbar {
+      min-height: 84px !important;
+      height: auto !important;
+      padding: 14px 28px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 18px !important;
+    }
+    .topbar-left {
+      display: flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+    .page-title-box {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 5px !important;
+      min-width: 0 !important;
+    }
+    .page-title {
+      font-size: 18.5px !important;
+      font-weight: 800 !important;
+      color: #2B2D42 !important;
+      letter-spacing: -0.3px !important;
+      line-height: 1.3 !important;
+      margin: 0 !important;
+    }
+    .page-subtitle {
+      font-size: 12.5px !important;
+      font-weight: 500 !important;
+      color: #64748B !important;
+      line-height: 1.45 !important;
+      margin: 0 !important;
+    }
+    .topbar-right {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      flex-shrink: 0 !important;
+    }
+    .btn-reset-topbar,
+    .ai-status-badge,
+    .system-badge {
+      white-space: nowrap !important;
+      padding: 6px 12px !important;
+      font-size: 11.5px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+    .quick-widget {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      white-space: nowrap !important;
+    }
+    .widget-label {
+      font-size: 11.5px !important;
+      white-space: nowrap !important;
+    }
+
+    /* 2. Balanced Symmetrical 2x2 Testimonials Grid (Fixes Image 2 Overflow) */
+    .testimonials-section-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+    }
+    .trust-stats-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 16px !important;
+      margin-bottom: 24px !important;
+      width: 100% !important;
+    }
+    .testimonials-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 20px !important;
+      width: 100% !important;
+    }
+    .testimonial-card {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      min-height: 195px !important;
+      padding: 22px 24px !important;
+      box-sizing: border-box !important;
+    }
+    @media (max-width: 768px) {
+      .trust-stats-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* 3. Cute Peach-Coral AI Mascot Logo */
+    .logo-mark {
+      width: 46px !important;
+      height: 46px !important;
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 52%, #FFB88C 100%) !important;
+      color: #FFFFFF !important;
+      border-radius: 15px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 6px 16px rgba(255, 107, 107, 0.34), inset 0 1.5px 2px rgba(255, 255, 255, 0.45) !important;
+      flex-shrink: 0 !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+    }
+    .ai-mascot-svg {
+      width: 34px !important;
+      height: 34px !important;
+      display: block !important;
+    }
+
+    /* 4. Problem Focus Suggestions Row & Pills (Matches Image 4 100%) */
+    .problem-label-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: wrap !important;
+      gap: 10px !important;
+      margin-bottom: 8px !important;
+      width: 100% !important;
+    }
+    .problem-label-row .form-label {
+      margin-bottom: 0 !important;
+      width: auto !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+    .problem-helper-actions {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin-left: auto !important;
+    }
+    .combine-mode-toggle {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-size: 12.5px !important;
+      font-weight: 600 !important;
+      color: #64748B !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      margin: 0 !important;
+    }
+    .combine-mode-toggle input[type="checkbox"] {
+      accent-color: #FF6B6B !important;
+      width: 15px !important;
+      height: 15px !important;
+      cursor: pointer !important;
+      margin: 0 !important;
+    }
+    .btn-clear-problem {
+      background: #FFF0EE !important;
+      color: #E11D48 !important;
+      border: 1px solid rgba(255, 107, 107, 0.28) !important;
+      border-radius: 999px !important;
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      transition: all 0.2s ease !important;
+    }
+    .btn-clear-problem:hover {
+      background: #FFE4E0 !important;
+      transform: translateY(-1px) !important;
+    }
+    .problem-suggestions-box {
+      margin-top: 12px !important;
+      background: linear-gradient(180deg, #FFFDFB 0%, #FFF6F2 100%) !important;
+      border: 1px solid rgba(255, 126, 103, 0.22) !important;
+      border-radius: 14px !important;
+      padding: 12px 14px !important;
+    }
+    .suggestions-header {
+      margin-bottom: 8px !important;
+    }
+    .tag-pill.active-suggestion {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%) !important;
+      color: #FFFFFF !important;
+      border-color: transparent !important;
+      box-shadow: 0 4px 10px rgba(255, 107, 107, 0.25) !important;
+      font-weight: 700 !important;
+    }
+
+    /* 5. Dashboard Chart Tags & Breakdown Pills */
+    .chart-tag-line {
+      background: #EFF6FF !important;
+      color: #2563EB !important;
+      border: 1px solid rgba(37, 99, 235, 0.25) !important;
+    }
+    .chart-tag-rank {
+      background: #FFF7ED !important;
+      color: #EA580C !important;
+      border: 1px solid rgba(234, 88, 12, 0.25) !important;
+    }
+    .chart-tag-contrib {
+      background: #F0FDF4 !important;
+      color: #16A34A !important;
+      border: 1px solid rgba(22, 163, 74, 0.25) !important;
+    }
+    .contribution-breakdown-pills {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+      margin-top: 14px !important;
+      padding-top: 12px !important;
+      border-top: 1px dashed rgba(0, 0, 0, 0.08) !important;
+      max-height: 150px !important;
+      overflow-y: auto !important;
+    }
+    .contrib-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      background: #FFF9F9 !important;
+      border: 1px solid rgba(255, 94, 98, 0.18) !important;
+      border-radius: 999px !important;
+      padding: 4px 10px !important;
+      font-size: 11.5px !important;
+    }
+    .contrib-dot {
+      width: 8px !important;
+      height: 8px !important;
+      border-radius: 50% !important;
+      flex-shrink: 0 !important;
+    }
+    .contrib-name {
+      font-weight: 700 !important;
+      color: #1E293B !important;
+    }
+    .contrib-val {
+      font-weight: 800 !important;
+      color: #FF5E62 !important;
+    }
+    .contrib-pct {
+      background: rgba(255, 94, 98, 0.14) !important;
+      color: #E11D48 !important;
+      padding: 1px 6px !important;
+      border-radius: 999px !important;
+      font-weight: 700 !important;
+      font-size: 10.5px !important;
+    }
+  </style>
+
+  <script src="/js/app.js?v=3.3"></script>
+  <script id="v3-inline-bridge">
+    (function() {
+      document.addEventListener("DOMContentLoaded", function() {
+        const btnClear = document.getElementById("btnClearProblem");
+        const inputProb = document.getElementById("inputProblem");
+        if (btnClear && inputProb) {
+          btnClear.addEventListener("click", function() {
+            inputProb.value = "";
+            document.querySelectorAll(".tag-pill").forEach(function(t) {
+              t.classList.remove("active-suggestion");
+            });
+            inputProb.focus();
+          });
+        }
+      });
+
+      let fallbackRankChart = null;
+      const origFetch = window.fetch;
+      window.fetch = async function(...args) {
+        const res = await origFetch.apply(this, args);
+        try {
+          const url = typeof args[0] === "string" ? args[0] : (args[0] && args[0].url) || "";
+          if (url.includes("/approve") || url.includes("/filter-dashboard")) {
+            const clone = res.clone();
+            clone.json().then(data => {
+              if (data && data.analytics && data.analytics.charts) {
+                setTimeout(() => {
+                  const charts = data.analytics.charts;
+                  // Ensure Line Chart (trendChart) has fill: false and clean title
+                  const tCanvas = document.getElementById("trendChart");
+                  if (tCanvas && window.Chart && typeof Chart.getChart === "function") {
+                    const existingTrend = Chart.getChart(tCanvas);
+                    if (existingTrend && existingTrend.data && existingTrend.data.datasets && existingTrend.data.datasets[0]) {
+                      existingTrend.data.datasets[0].fill = false;
+                      existingTrend.data.datasets[0].backgroundColor = "transparent";
+                      existingTrend.update();
+                    }
+                  }
+                  // Ensure Horizontal Ranking Bar Chart is rendered even if external app.js is cached
+                  const rCanvas = document.getElementById("rankingChart");
+                  if (rCanvas && window.Chart && charts.ranking_bar) {
+                    const existingRank = typeof Chart.getChart === "function" ? Chart.getChart(rCanvas) : null;
+                    if (!existingRank) {
+                      if (fallbackRankChart) fallbackRankChart.destroy();
+                      const rData = charts.ranking_bar;
+                      const rTitle = document.getElementById("rankingChartTitle");
+                      if (rTitle && rData.title) rTitle.textContent = rData.title;
+                      const palette = ["#FF5E62", "#FF755A", "#FF8E53", "#FFA766", "#FFBF7B", "#FFD492", "#FFE4AB"];
+                      fallbackRankChart = new Chart(rCanvas.getContext("2d"), {
+                        type: "bar",
+                        data: {
+                          labels: rData.labels || [],
+                          datasets: [{
+                            label: "Giá trị xếp hạng",
+                            data: rData.data || [],
+                            backgroundColor: palette.slice(0, (rData.labels || []).length),
+                            borderRadius: 6
+                          }]
+                        },
+                        options: {
+                          indexAxis: "y",
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: { legend: { display: false } },
+                          scales: { x: { grid: { color: "rgba(0,0,0,0.04)" } }, y: { grid: { display: false } } }
+                        }
+                      });
+                    }
+                  }
+                  // Ensure Contribution Breakdown Pills (Number & %) are populated
+                  const pillsBox = document.getElementById("distributionPills");
+                  const dist = charts.distribution_pie;
+                  if (pillsBox && dist && pillsBox.children.length === 0) {
+                    const colors = ["#FF5E62", "#FF9966", "#FFCC80", "#80CBC4", "#9FA8DA", "#F48FB1", "#CE93D8"];
+                    const slices = dist.detailed_slices || (dist.labels || []).map((lbl, idx) => ({
+                      label: lbl,
+                      formatted_value: (dist.formatted_values && dist.formatted_values[idx]) || String((dist.data && dist.data[idx]) || 0),
+                      percentage_str: (dist.percentages && dist.percentages[idx] !== undefined) ? dist.percentages[idx] + "%" : ""
+                    }));
+                    pillsBox.innerHTML = "";
+                    slices.forEach((sl, idx) => {
+                      const pill = document.createElement("div");
+                      pill.className = "contrib-pill";
+                      pill.innerHTML =
+                        '<span class="contrib-dot" style="background:' + colors[idx % colors.length] + '"></span>' +
+                        '<span class="contrib-name">' + (sl.label || "") + ':</span>' +
+                        '<span class="contrib-val">' + (sl.formatted_value || "") + '</span>' +
+                        (sl.percentage_str ? '<span class="contrib-pct">(' + sl.percentage_str + ')</span>' : "");
+                      pillsBox.appendChild(pill);
+                    });
+                  }
+                }, 80);
+              }
+            }).catch(() => {});
+          }
+        } catch (e) {}
+        return res;
+      };
+    })();
+  </script>
+</body>
+
+</html>
